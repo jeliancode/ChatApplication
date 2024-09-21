@@ -1,0 +1,109 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|e:\\jelian files\\2024\\temp 2\\redes 2\\laboratorios\\lab4\\basicchatapp\\messagesmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|solutionrelative:messagesmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|e:\\jelian files\\2024\\temp 2\\redes 2\\laboratorios\\lab4\\basicchatapp\\chatclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|solutionrelative:chatclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|e:\\jelian files\\2024\\temp 2\\redes 2\\laboratorios\\lab4\\basicchatapp\\clientmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|solutionrelative:clientmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|e:\\jelian files\\2024\\temp 2\\redes 2\\laboratorios\\lab4\\basicchatapp\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|solutionrelative:server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|e:\\jelian files\\2024\\temp 2\\redes 2\\laboratorios\\lab4\\basicchatapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{53D78AED-FFBB-4546-B850-0DA84369DF90}|BasicChatApp.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 274,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MessagesManager.cs",
+              "DocumentMoniker": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\MessagesManager.cs",
+              "RelativeDocumentMoniker": "MessagesManager.cs",
+              "ToolTip": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\MessagesManager.cs",
+              "RelativeToolTip": "MessagesManager.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAowBYAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T16:16:21.913Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ClientManager.cs",
+              "DocumentMoniker": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\ClientManager.cs",
+              "RelativeDocumentMoniker": "ClientManager.cs",
+              "ToolTip": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\ClientManager.cs",
+              "RelativeToolTip": "ClientManager.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T16:01:50.765Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ChatClient.cs",
+              "DocumentMoniker": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\ChatClient.cs",
+              "RelativeDocumentMoniker": "ChatClient.cs",
+              "ToolTip": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\ChatClient.cs",
+              "RelativeToolTip": "ChatClient.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABsAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T15:59:54.024Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Server.cs",
+              "DocumentMoniker": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\Server.cs",
+              "RelativeDocumentMoniker": "Server.cs",
+              "ToolTip": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\Server.cs",
+              "RelativeToolTip": "Server.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T15:44:24.06Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "E:\\Jelian Files\\2024\\Temp 2\\Redes 2\\Laboratorios\\Lab4\\BasicChatApp\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-21T15:42:13.518Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
