@@ -9,7 +9,7 @@ namespace BasicChatApp
 {
     public class MessagesManager
     {
-        public static void ReceiveMessages(NetworkStream stream)
+        public void ReceiveMessages(NetworkStream stream)
         {
             byte[] buffer = new byte[1024];
             try

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-namespace BasicChatApp
+
+namespace ServerChatApplication
 {
     public class Server
     {
@@ -30,6 +31,6 @@ namespace BasicChatApp
             client2Thread.Start();
         }
 
-       
+
     }
 }

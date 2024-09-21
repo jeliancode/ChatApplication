@@ -7,13 +7,15 @@ namespace BasicChatApp
 {
     public class ChatClient
     {
+        private MessagesManager messagesManager;
         public static void Main(string[] args)
         {
+            MessagesManager messagesManager = new MessagesManager();
             try
             {
                 TcpClient client = new TcpClient("127.0.0.1", 6000);
                 NetworkStream stream = client.GetStream();
-                Thread receiverThread = new Thread(() => ReceiveMesseges(stream));
+                Thread receiverThread = new Thread(() => messagesManager.ReceiveMessages(stream));
                 receiverThread.Start();
 
                 while (true)
@@ -23,9 +25,10 @@ namespace BasicChatApp
                     stream.Write(buffer, 0, buffer.Length);
                 }
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
                 Console.WriteLine("Error: " + e.Message);
             }
+        }
     }
 }
