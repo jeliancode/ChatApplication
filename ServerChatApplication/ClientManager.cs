@@ -9,19 +9,12 @@ namespace ServerChatApplication
 {
     public class ClientManager
     {
-        private NetworkStream senderStream;
-        private NetworkStream receiberStream;
-        private byte[] buffer;
-        private TcpClient _sender;
-        private TcpClient _receiber;
-
-        public void HandleClient(TcpClient sender, TcpClient receiber)
+        public void HandleClient(TcpClient sender, TcpClient receiver)
         {
-            _sender = sender;
-            _receiber = receiber;
-            senderStream = _sender.GetStream();
-            receiberStream = _receiber.GetStream();
-            buffer = new byte[1024];
+
+            NetworkStream senderStream = sender.GetStream();
+            NetworkStream receiberStream = receiver.GetStream();
+            byte[] buffer = new byte[1024];
 
             try
             {
@@ -30,11 +23,15 @@ namespace ServerChatApplication
                     int byteCount = senderStream.Read(buffer, 0, buffer.Length);
                     if (byteCount == 0)
                     {
+                        Console.WriteLine("El cliente ha cerrado la conexión.");
                         break;
                     }
+
                     string message = Encoding.ASCII.GetString(buffer, 0, byteCount);
                     Console.WriteLine("Mensaje recibido: " + message);
+
                     receiberStream.Write(buffer, 0, byteCount);
+                    Console.WriteLine("Mensaje reenviado al otro cliente.");
                 }
             }
             catch (Exception e)
@@ -43,16 +40,14 @@ namespace ServerChatApplication
             }
             finally
             {
-                CloseConnection();
+                CloseConnection(senderStream, receiberStream);
             }
         }
 
-        private void CloseConnection()
+        private void CloseConnection(NetworkStream senderStream, NetworkStream receiverStream)
         {
             senderStream.Close();
-            receiberStream.Close();
-            _sender.Close();
-            _receiber.Close();
+            receiverStream.Close();
         }
     }
 }
