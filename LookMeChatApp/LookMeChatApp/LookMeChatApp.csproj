@@ -1,0 +1,24 @@
+<Project Sdk="Uno.Sdk">
+  <PropertyGroup>
+  <TargetFrameworks>net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop</TargetFrameworks>
+
+  <OutputType>Exe</OutputType>
+  <UnoSingleProject>true</UnoSingleProject>
+
+  <ApplicationTitle>LookMeChatApp</ApplicationTitle>
+  <ApplicationId>com.companyname.LookMeChatApp</ApplicationId>
+  <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+  <ApplicationVersion>1</ApplicationVersion>
+  <ApplicationPublisher>tetch</ApplicationPublisher>
+  <Description>LookMeChatApp powered by Uno Platform.</Description>
+
+  <!-- Descomenta y establece la versión del Windows SDK que necesitas -->
+  <WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
+
+  <UnoFeatures>
+    Mvvm;
+  </UnoFeatures>
+</PropertyGroup>
+
+
+</Project>
