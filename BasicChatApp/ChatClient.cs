@@ -16,6 +16,7 @@ namespace BasicChatApp
             {
                 TcpClient client = new TcpClient(serverIpAddress, serverPort);
                 NetworkStream stream = client.GetStream();
+
                 Thread receiverThread = new Thread(() => messagesManager.ReceiveMessages(stream));
                 receiverThread.Start();
 

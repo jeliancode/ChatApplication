@@ -3,6 +3,11 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:LookMeChatApp"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Page.Resources>
+    <local:HorizontalAlignmentConverter x:Key="HorizontalAlignmentConverter"/>
+    <local:BackgroundColorConverter x:Key="BackgroundColorConverter"/>
+  </Page.Resources>
+
   <Grid>
     <!-- Barra Superior -->
     <Grid Background="#15072C" Height="70" VerticalAlignment="Top">
@@ -11,10 +16,8 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
 
-      <!-- Botón de Retroceso -->
       <Button Grid.Column="0" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Content="←" Foreground="White"/>
 
-      <!-- Foto de Perfil y Nombre del Usuario -->
       <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
         <Image Source="ms-appx:///Assets/Images/user.png" Width="40" Height="40"/>
         <StackPanel Orientation="Vertical" Margin="10,0,0,0">
@@ -25,13 +28,14 @@
    </Grid>
     
 
-    <!-- Lista de Mensajes -->
+    <!-- Chat -->
     <ListView x:Name="MessagesList" Margin="0,70,0,70" Background="#0E0D3A" VerticalAlignment="Stretch" ItemsSource="{x:Bind Messages}">
       <ListView.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Margin="10">
-            <Border Background="#561887" CornerRadius="10" Padding="10" HorizontalAlignment="Left" VerticalAlignment="Center">
-              <TextBlock Text="{Binding}" Foreground="White" TextWrapping="Wrap"/>
+        <DataTemplate x:DataType="local:Message">
+          <StackPanel Margin="10" HorizontalAlignment="{Binding IsSentByUser, Converter={StaticResource HorizontalAlignmentConverter}}">
+            <Border Background="{Binding IsSentByUser, Converter={StaticResource BackgroundColorConverter}}" 
+                        CornerRadius="10" Padding="10" VerticalAlignment="Center" MaxWidth="250">
+              <TextBlock Text="{x:Bind MessageContent}" Foreground="White" TextWrapping="Wrap"/>
             </Border>
           </StackPanel>
         </DataTemplate>
@@ -39,7 +43,8 @@
     </ListView>
 
 
-    <!-- Barra de Entrada de Mensaje -->
+
+    <!-- Barra de entrada de mensaje -->
     <Grid Background="#0E0D3A" Height="70" VerticalAlignment="Bottom">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
@@ -54,7 +59,7 @@
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBox Grid.Column="0" PlaceholderText="Message" Margin="10,0,10,0" VerticalAlignment="Center" Height="40" Foreground="White" BorderBrush="Transparent" Background="Transparent"/>
+        <TextBox x:Name="MessageInput" Grid.Column="0" PlaceholderText="Message" Margin="10,0,10,0" VerticalAlignment="Center" Height="40" Foreground="White" BorderBrush="Transparent" Background="Transparent"/>
 
         <Button Grid.Column="1" VerticalAlignment="Center" Background="Transparent">
           <Image Source="ms-appx:///Assets/Images/link.png" Width="20" Height="20" HorizontalAlignment="Center" Margin="0"/>
@@ -64,8 +69,8 @@
         </Button>
       </Grid>
 
-      <Button Grid.Column="2" VerticalAlignment="Bottom" Background="#8E24AA" HorizontalAlignment="Right" Margin="10, 10, 10, 15" Height="40" Width="40">
-        <Image Source="ms-appx:///Assets/Images/microphone.png" Width="20" Height="20" HorizontalAlignment="Center" Margin="0"/>
+      <Button Grid.Column="2" Click="SendMessage" VerticalAlignment="Bottom" Background="#8E24AA" HorizontalAlignment="Right" Margin="10, 10, 10, 15" Height="40" Width="40">
+        <Image Source="ms-appx:///Assets/Images/send.png" Width="20" Height="20" HorizontalAlignment="Center"/>
       </Button>
     </Grid>
   </Grid>
