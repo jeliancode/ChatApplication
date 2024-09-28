@@ -1,58 +1,39 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace LookMeChatApp
 {
     public class MessagesManager
     {
+        private readonly Action<string> _messageReceivedCallback;
 
-        private MessagesManager messagesManager;
+        public MessagesManager(Action<string> messageReceivedCallback)
+        {
+            _messageReceivedCallback = messageReceivedCallback;
+        }
 
-
-        public void ReceiveMessage(NetworkStream stream, string message)
+        public void ReceiveMessages(NetworkStream stream)
         {
             try
             {
                 byte[] buffer = new byte[1024];
+
 
                 while (true)
                 {
                     int byteCounter = stream.Read(buffer, 0, buffer.Length);
                     if (byteCounter == 0)
                     {
+                        Console.WriteLine("La conexión se ha cerrado.");
                         break;
                     }
-                    message = Encoding.ASCII.GetString(buffer, 0, byteCounter);
-                }
-            }
-            catch(Exception e) 
-            {
-                Console.WriteLine("Exception" + e.Message);
-            }
-        }
 
-        public void SendMessage(NetworkStream stream, Message message)
-        {
-            try
-            {
-                Thread receiverThread = new Thread(() => ReceiveMessage(stream, message.MessageContent));
-                receiverThread.Start();
+                    string receivedMessage = Encoding.ASCII.GetString(buffer, 0, byteCounter);
+                    Console.WriteLine("Mensaje recibido: " + receivedMessage);
 
-                while (true)
-                {
-                    
-                    if (!string.IsNullOrEmpty(message.MessageContent))
-                    {
-                        byte[] buffer = Encoding.ASCII.GetBytes(message.MessageContent);
-                        stream.Write(buffer, 0, buffer.Length);
-                        Console.WriteLine("Mensaje enviado: " + message.MessageContent);
-                        
-                    }
-                    message = null;
+                    _messageReceivedCallback?.Invoke(receivedMessage);
                 }
             }
             catch (Exception e)
@@ -61,5 +42,36 @@ namespace LookMeChatApp
             }
         }
 
+        public void SendMessage(NetworkStream stream, string messageContent)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(messageContent))
+                {
+                    byte[] buffer = Encoding.ASCII.GetBytes(messageContent);
+                    stream.Write(buffer, 0, buffer.Length); 
+                    Console.WriteLine("Mensaje enviado: " + messageContent);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e.Message);
+            }
+        }
+
+        public void StartReceiving(NetworkStream stream)
+        {
+            Thread receiverThread = new Thread(() => ReceiveMessages(stream));
+            receiverThread.Start();
+        }
+
+        public void CloseConnection(NetworkStream stream)
+        {
+            if (stream != null)
+            {
+                stream.Close();
+                Console.WriteLine("Conexión cerrada.");
+            }
+        }
     }
 }

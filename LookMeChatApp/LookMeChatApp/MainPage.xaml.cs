@@ -72,6 +72,6 @@ public sealed partial class MainPage : Page
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        CloseConnection();  // Cerrar la conexión cuando se navega fuera de la página
+        CloseConnection();
     }
 }
