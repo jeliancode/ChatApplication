@@ -13,26 +13,65 @@ public sealed partial class MainPage : Page
     NetworkStream _stream;
     private const string serverIpAddress = "192.168.1.204";
     private const int serverPort = 6000;
+
     public MainPage()
     {
         this.InitializeComponent();
         Messages = new ObservableCollection<Message>();
-        _messagesManager = new MessagesManager();
         MessagesList.ItemsSource = Messages;
-        _tcpClient = new TcpClient(serverIpAddress, serverPort);
-        _stream = _tcpClient.GetStream();
+        _messagesManager = new MessagesManager(OnMessageReceived);
+
+        try
+        {
+            _tcpClient = new TcpClient(serverIpAddress, serverPort);
+            _stream = _tcpClient.GetStream();
+            _messagesManager.StartReceiving(_stream);
+        }
+        catch (SocketException ex)
+        {
+            Console.WriteLine("Error al conectarse al servidor: " + ex.Message);
+        }
     }
 
     private void SendMessage(object sender, RoutedEventArgs e)
     {
-
         string messageContent = MessageInput.Text;
         if (!string.IsNullOrWhiteSpace(messageContent))
         {
-            Message message = new Message { MessageContent = messageContent, IsSentByUser = true };
-            Messages.Add(message);
-            _messagesManager.SendMessage(_stream, message);
-            MessageInput.Text = "";          
+            if (_stream != null && _stream.CanWrite)
+            {
+                Message messageSent = new Message { MessageContent = messageContent, IsSentByUser = true };
+                Messages.Add(messageSent);
+                _messagesManager.SendMessage(_stream, messageContent);
+                MessageInput.Text = "";
+            }
+            else
+            {
+                Console.WriteLine("La conexión no está disponible.");
+            }
         }
+    }
+
+    private void OnMessageReceived(string message)
+    {
+        DispatcherQueue.TryEnqueue(() =>
+        {
+            Message messageReceived = new Message { MessageContent = message, IsSentByUser = false };
+            Messages.Add(messageReceived);
+        });
+    }
+
+    private void CloseConnection()
+    {
+        if (_stream != null)
+        {
+            _messagesManager.CloseConnection(_stream);
+        }
+    }
+
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        base.OnNavigatingFrom(e);
+        CloseConnection();  // Cerrar la conexión cuando se navega fuera de la página
     }
 }
