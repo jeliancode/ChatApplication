@@ -28,6 +28,7 @@ public sealed partial class MainPage : Page
         {
             Message messageSent = new Message 
             { 
+                MessageId = "76707551",
                 MessageContent = message,
                 Username = "Jesus",
                 Room = "room",
@@ -40,7 +41,7 @@ public sealed partial class MainPage : Page
             MessageInput.Text = "";
         }
     }
-    //Bug en UI
+
     private void OnMessageReceived(string message)
     {
         DispatcherQueue.TryEnqueue(() =>

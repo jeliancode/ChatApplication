@@ -29,12 +29,11 @@ namespace LookMeChatApp.Service
                 .WithTcpServer("test.mosquitto.org")
                 .Build();
 
-            //Bug 
             _mqttClient.ApplicationMessageReceivedAsync += e =>
             {
                string messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
-                Message? receivedMessage = _serializer.Deserialize(messageContent);
-               _messageReceivedCallback?.Invoke(messageContent);
+               Message receivedMessage = _serializer.Deserialize(messageContent);
+               _messageReceivedCallback?.Invoke(receivedMessage.MessageContent);
                return Task.CompletedTask;
             };
 
