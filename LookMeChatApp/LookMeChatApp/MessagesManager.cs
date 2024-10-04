@@ -2,75 +2,64 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Server;
 
 namespace LookMeChatApp
 {
     public class MessagesManager
     {
         private readonly Action<string> _messageReceivedCallback;
+        private IMqttClient? _mqttClient;
 
         public MessagesManager(Action<string> messageReceivedCallback)
         {
             _messageReceivedCallback = messageReceivedCallback;
+
         }
 
-        public void ReceiveMessages(NetworkStream stream)
+        public async Task ConnectToMqttBrokerAsync()
         {
-            try
+            var factory = new MqttFactory();
+            _mqttClient = factory.CreateMqttClient();
+
+            var options = new MqttClientOptionsBuilder()
+                .WithTcpServer("test.mosquitto.org")
+                .Build();
+
+            _mqttClient.ConnectedAsync += e =>
             {
-                byte[] buffer = new byte[1024];
+                var topic = new MqttTopicFilterBuilder()
+                .WithTopic("/room/+/messages")
+                .Build();
+                _mqttClient.SubscribeAsync(topic);
 
+                return Task.CompletedTask;
+            };
 
-                while (true)
-                {
-                    int byteCounter = stream.Read(buffer, 0, buffer.Length);
-                    if (byteCounter == 0)
-                    {
-                        Console.WriteLine("La conexión se ha cerrado.");
-                        break;
-                    }
-
-                    string receivedMessage = Encoding.ASCII.GetString(buffer, 0, byteCounter);
-                    Console.WriteLine("Mensaje recibido: " + receivedMessage);
-
-                    _messageReceivedCallback?.Invoke(receivedMessage);
-                }
-            }
-            catch (Exception e)
+            _mqttClient.ApplicationMessageReceivedAsync += e =>
             {
-                Console.WriteLine("Error: " + e.Message);
-            }
+               string messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
+               _messageReceivedCallback?.Invoke(messageContent);
+               return Task.CompletedTask;
+            };
+            
+            await _mqttClient.ConnectAsync(options, CancellationToken.None);
+
         }
 
-        public void SendMessage(NetworkStream stream, string messageContent)
-        {
-            try
-            {
-                if (!string.IsNullOrEmpty(messageContent))
-                {
-                    byte[] buffer = Encoding.ASCII.GetBytes(messageContent);
-                    stream.Write(buffer, 0, buffer.Length); 
-                    Console.WriteLine("Mensaje enviado: " + messageContent);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error: " + e.Message);
-            }
-        }
 
-        public void StartReceiving(NetworkStream stream)
+        public async Task SendMessageAsync(string messageContent)
         {
-            Thread receiverThread = new Thread(() => ReceiveMessages(stream));
-            receiverThread.Start();
-        }
+            var message = new MqttApplicationMessageBuilder()
+                .WithTopic("/room/jesus/messages")
+                .WithPayload(messageContent)
+                .Build();
 
-        public void CloseConnection(NetworkStream stream)
-        {
-            if (stream != null)
+            if (_mqttClient.IsConnected)
             {
-                stream.Close();
-                Console.WriteLine("Conexión cerrada.");
+                await _mqttClient.PublishAsync(message, CancellationToken.None);
             }
         }
     }

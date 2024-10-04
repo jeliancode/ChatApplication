@@ -19,6 +19,9 @@
     Mvvm;
   </UnoFeatures>
 </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MQTTnet" />
+  </ItemGroup>
 
 
 </Project>

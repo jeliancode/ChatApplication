@@ -44,34 +44,45 @@
 
 
 
-    <!-- Barra de entrada de mensaje -->
     <Grid Background="#0E0D3A" Height="70" VerticalAlignment="Bottom">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />
         <ColumnDefinition Width="Auto" />
-        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
-      
-      <Grid Background="#15072C" Height="50" VerticalAlignment="Center" Grid.Column="0">
+
+      <Grid Grid.Column="0" Background="#15072C" VerticalAlignment="Center">
         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBox x:Name="MessageInput" Grid.Column="0" PlaceholderText="Message" Margin="10,0,10,0" VerticalAlignment="Center" Height="40" Foreground="White" BorderBrush="Transparent" Background="Transparent"/>
-
-        <Button Grid.Column="1" VerticalAlignment="Center" Background="Transparent">
-          <Image Source="ms-appx:///Assets/Images/link.png" Width="20" Height="20" HorizontalAlignment="Center" Margin="0"/>
+        <Button Grid.Column="0" VerticalAlignment="Center" Background="Transparent" Padding="10">
+          <Image Source="ms-appx:///Assets/Images/emoji.png" Width="20" Height="20" HorizontalAlignment="Center"/>
         </Button>
-        <Button Grid.Column="2" VerticalAlignment="Center" Background="Transparent" Margin="0,0,10,0">
-          <Image Source="ms-appx:///Assets/Images/camera.png" Width="20" Height="20" HorizontalAlignment="Center" Margin="0"/>
+
+        <TextBox x:Name="MessageInput" Grid.Column="1" PlaceholderText="Message" VerticalAlignment="Center" 
+                 Height="40" Foreground="White" BorderBrush="Transparent" Background="Transparent" 
+                 Padding="10,0" FontSize="16"/>
+
+        <Button Grid.Column="2" VerticalAlignment="Center" Background="Transparent" Padding="10">
+          <Image Source="ms-appx:///Assets/Images/link.png" Width="20" Height="20" HorizontalAlignment="Center"/>
+        </Button>
+
+        <Button Grid.Column="3" VerticalAlignment="Center" Background="Transparent" Padding="10">
+          <Image Source="ms-appx:///Assets/Images/camera.png" Width="20" Height="20" HorizontalAlignment="Center"/>
         </Button>
       </Grid>
 
-      <Button Grid.Column="2" Click="SendMessage" VerticalAlignment="Bottom" Background="#8E24AA" HorizontalAlignment="Right" Margin="10, 10, 10, 15" Height="40" Width="40">
-        <Image Source="ms-appx:///Assets/Images/send.png" Width="20" Height="20" HorizontalAlignment="Center"/>
-      </Button>
+      <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right">
+        <Button Click="SendMessage" VerticalAlignment="Center" Background="#8E24AA" Height="40" Width="40" Padding="10" 
+                HorizontalAlignment="Center" CornerRadius="25">
+          <Image Source="ms-appx:///Assets/Images/send.png" Width="20" Height="20" HorizontalAlignment="Center"/>
+        </Button>
+      </Grid>
     </Grid>
+
+
   </Grid>
 </Page>

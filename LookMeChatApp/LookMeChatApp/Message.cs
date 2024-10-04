@@ -7,6 +7,6 @@ using System.Threading.Tasks;
 namespace LookMeChatApp;
 public class Message
 {
-    public string MessageContent { get; set; }
+    public string? MessageContent { get; set; }
     public bool IsSentByUser { get; set; }
 }

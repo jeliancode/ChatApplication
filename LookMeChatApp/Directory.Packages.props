@@ -7,4 +7,7 @@
   -->
   <ItemGroup>
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="MQTTnet" Version="4.3.7.1207" />
+  </ItemGroup>
 </Project>
