@@ -1,20 +1,18 @@
 using System.Collections.ObjectModel;
-using System.Net.Sockets;
 using LookMeChatApp.Model;
-using Windows.ApplicationModel.Chat;
-using LookMeChatApp.Service;
+using LookMeChatApp.Services;
 
 namespace LookMeChatApp.View;
 
 public sealed partial class MainPage : Page
 {
-    public ObservableCollection<Message> Messages { get; set; }
+    public ObservableCollection<ChatMessage> Messages { get; set; }
     private MessagesManager _messagesManager;
 
     public MainPage()
     {
         this.InitializeComponent();
-        Messages = new ObservableCollection<Message>();
+        Messages = new ObservableCollection<ChatMessage>();
         MessagesList.ItemsSource = Messages;
         _messagesManager = new MessagesManager(OnMessageReceived);
 
@@ -26,11 +24,10 @@ public sealed partial class MainPage : Page
         string message = MessageInput.Text;
         if (!string.IsNullOrWhiteSpace(message))
         {
-            Message messageSent = new Message 
+            ChatMessage messageSent = new ChatMessage 
             { 
-                MessageId = "76707551",
-                MessageContent = message,
-                Username = "Jesus",
+                
+                Message = message,
                 Room = "room",
                 IsSentByUser = true
             };
@@ -46,7 +43,7 @@ public sealed partial class MainPage : Page
     {
         DispatcherQueue.TryEnqueue(() =>
         {
-            Message messageReceived = new Message { MessageContent = message, IsSentByUser = false };
+            ChatMessage messageReceived = new ChatMessage { Message = message, IsSentByUser = false };
             Messages.Add(messageReceived);
         });
     }
