@@ -1,11 +1,12 @@
-﻿<Page x:Class="LookMeChatApp.MainPage"
+﻿<Page x:Class="LookMeChatApp.View.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:LookMeChatApp"
+      xmlns:model="using:LookMeChatApp.Model"
+      xmlns:viewModel="using:LookMeChatApp.ViewModel"
       Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
   <Page.Resources>
-    <local:HorizontalAlignmentConverter x:Key="HorizontalAlignmentConverter"/>
-    <local:BackgroundColorConverter x:Key="BackgroundColorConverter"/>
+    <viewModel:HorizontalAlignmentConverter x:Key="HorizontalAlignmentConverter"/>
+    <viewModel:BackgroundColorConverter x:Key="BackgroundColorConverter"/>
   </Page.Resources>
 
   <Grid>
@@ -31,7 +32,7 @@
     <!-- Chat -->
     <ListView x:Name="MessagesList" Margin="0,70,0,70" Background="#0E0D3A" VerticalAlignment="Stretch" ItemsSource="{x:Bind Messages}">
       <ListView.ItemTemplate>
-        <DataTemplate x:DataType="local:Message">
+        <DataTemplate x:DataType="model:Message">
           <StackPanel Margin="10" HorizontalAlignment="{Binding IsSentByUser, Converter={StaticResource HorizontalAlignmentConverter}}">
             <Border Background="{Binding IsSentByUser, Converter={StaticResource BackgroundColorConverter}}" 
                         CornerRadius="10" Padding="10" VerticalAlignment="Center" MaxWidth="250">
@@ -43,7 +44,7 @@
     </ListView>
 
 
-
+    <!-- Entrada de mensaje -->
     <Grid Background="#0E0D3A" Height="70" VerticalAlignment="Bottom">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" />

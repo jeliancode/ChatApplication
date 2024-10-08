@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Net.Sockets;
+using LookMeChatApp.Model;
 using Windows.ApplicationModel.Chat;
+using LookMeChatApp.Service;
 
-namespace LookMeChatApp;
+namespace LookMeChatApp.View;
 
 public sealed partial class MainPage : Page
 {
@@ -21,12 +23,21 @@ public sealed partial class MainPage : Page
 
     private async void SendMessage(object sender, RoutedEventArgs e)
     {
-        string messageContent = MessageInput.Text;
-        if (!string.IsNullOrWhiteSpace(messageContent))
+        string message = MessageInput.Text;
+        if (!string.IsNullOrWhiteSpace(message))
         {
-            Message messageSent = new Message { MessageContent = messageContent, IsSentByUser = true };
+            Message messageSent = new Message 
+            { 
+                MessageId = "76707551",
+                MessageContent = message,
+                Username = "Jesus",
+                Room = "room",
+                IsSentByUser = true
+            };
+
             Messages.Add(messageSent);
-            await _messagesManager.SendMessageAsync(messageContent);
+
+            await _messagesManager.SendMessageAsync(messageSent);
             MessageInput.Text = "";
         }
     }
