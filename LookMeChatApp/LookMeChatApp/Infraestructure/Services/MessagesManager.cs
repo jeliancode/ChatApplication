@@ -1,13 +1,13 @@
 using System.Text;
-using LookMeChatApp.Interface;
-using LookMeChatApp.Model;
+using LookMeChatApp.Domain.Interface;
+using LookMeChatApp.Domain.Model;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Server;
 
-namespace LookMeChatApp.Services
+namespace LookMeChatApp.Infraestructure.Services
 {
-    public class MessagesManager
+    public class MessagesManager : IMessageHandler
     {
         private readonly Action<string> _messageReceivedCallback;
         private IMqttClient? _mqttClient;
@@ -42,15 +42,6 @@ namespace LookMeChatApp.Services
             await _mqttClient.SubscribeAsync(topic);
         }
 
-        private Task ReceiveMessageAsync(MqttApplicationMessageReceivedEventArgs e)
-        {
-            string messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
-            ChatMessage receivedMessage = _serializer.Deserialize(messageContent);
-            _messageReceivedCallback?.Invoke(receivedMessage.Message);
-
-            return Task.CompletedTask;
-        }
-
         public async Task SendMessageAsync(ChatMessage messageSent)
         {
 
@@ -62,6 +53,15 @@ namespace LookMeChatApp.Services
                 .Build();
 
            await _mqttClient.PublishAsync(message, CancellationToken.None);
+        }
+
+        public Task ReceiveMessageAsync(MqttApplicationMessageReceivedEventArgs e)
+        {
+            string messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
+            ChatMessage receivedMessage = _serializer.Deserialize(messageContent);
+            _messageReceivedCallback?.Invoke(receivedMessage.Message);
+
+            return Task.CompletedTask;
         }
     }
 }

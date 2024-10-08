@@ -1,4 +1,4 @@
-namespace LookMeChatApp.Model;
+namespace LookMeChatApp.Domain.Model;
 public class ChatMessage
 {
     public Guid? Id { get; set; }
