@@ -2,6 +2,8 @@ using System;
 using Microsoft.Extensions.Logging;
 using Uno.Resizetizer;
 using LookMeChatApp.Presentation.View;
+using LookMeChatApp.Domain.Interface;
+using LookMeChatApp.Infraestructure.Services;
 
 namespace LookMeChatApp;
 public partial class App : Application
@@ -10,6 +12,8 @@ public partial class App : Application
     /// Initializes the singleton application object. This is the first line of authored code
     /// executed, and as such is the logical equivalent of main() or WinMain().
     /// </summary>
+    /// 
+    public static INavigation NavigationService { get; private set; }
     public App()
     {
         this.InitializeComponent();
@@ -36,6 +40,8 @@ public partial class App : Application
             MainWindow.Content = rootFrame;
 
             rootFrame.NavigationFailed += OnNavigationFailed;
+
+            NavigationService = new NavigationService(rootFrame);
         }
 
         if (rootFrame.Content == null)
@@ -43,7 +49,7 @@ public partial class App : Application
             // When the navigation stack isn't restored navigate to the first page,
             // configuring the new page by passing required information as a navigation
             // parameter
-            rootFrame.Navigate(typeof(MainPage), args.Arguments);
+            rootFrame.Navigate(typeof(SignUpPage), args.Arguments);
         }
 
         MainWindow.SetWindowIcon();

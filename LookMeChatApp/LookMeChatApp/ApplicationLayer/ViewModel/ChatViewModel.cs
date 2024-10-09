@@ -39,7 +39,6 @@ public class ChatViewModel : INotifyPropertyChanged
                 SenderId = Guid.NewGuid(),
                 Room = "room",
                 Timestamp = DateTime.UtcNow.ToString(),
-                IsSentByUser = true
             };
 
             Messages.Add(message);
@@ -54,7 +53,6 @@ public class ChatViewModel : INotifyPropertyChanged
         var receivedMessage = new ChatMessage
         {
             Message = messageContent,
-            IsSentByUser = false
         };
 
         Messages.Add(receivedMessage);

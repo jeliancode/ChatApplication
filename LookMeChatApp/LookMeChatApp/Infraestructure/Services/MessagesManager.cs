@@ -36,7 +36,7 @@ namespace LookMeChatApp.Infraestructure.Services
         private async Task SubscribeToTopicAsync()
         {
             var topic = new MqttTopicFilterBuilder()
-                .WithTopic("/room/+/messages")
+                .WithTopic("/v1/room/+/messages")
                 .Build();
 
             await _mqttClient.SubscribeAsync(topic);
@@ -48,7 +48,7 @@ namespace LookMeChatApp.Infraestructure.Services
             string messageSerialized = _serializer.Serialize(messageSent);
 
             var message = new MqttApplicationMessageBuilder()
-                .WithTopic("/room/jesus/messages")
+                .WithTopic("/v1/room/jesus/messages")
                 .WithPayload(messageSerialized)
                 .Build();
 
