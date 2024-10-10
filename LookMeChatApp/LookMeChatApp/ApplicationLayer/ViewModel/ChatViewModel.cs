@@ -53,7 +53,7 @@ public class ChatViewModel : INotifyPropertyChanged
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
-           // Messages.Add(message);
+
 
             MessageInput = string.Empty;
             OnPropertyChanged(nameof(MessageInput));

@@ -6,17 +6,18 @@ using LookMeChatApp.Domain.Model;
 
 namespace LookMeChatApp.Presentation.View;
 
-public sealed partial class MainPage : Page
+public sealed partial class ChatPage : Page
 {
     private readonly ChatViewModel _chatViewModel;
 
-    public MainPage()
+    public ChatPage()
     {
         this.InitializeComponent();
         var messagesManager = new MessagesManager();
         var sendMessageUseCase = new SendMessageUseCase(messagesManager);
         var receiveMessageUseCase = new ReceiveMessageUseCase(messagesManager);
         var messageRepository = App.SQLiteDb.MessageRepository;
+
         _chatViewModel = new ChatViewModel(sendMessageUseCase, receiveMessageUseCase, messageRepository);
         this.DataContext = _chatViewModel;
 

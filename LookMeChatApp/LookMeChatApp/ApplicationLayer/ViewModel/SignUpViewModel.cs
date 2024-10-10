@@ -44,7 +44,7 @@ public class SignUpViewModel
             {
                 Console.WriteLine("Error: "+e.Message);
             }
-            _navigation.NavigateTo("Main");
+            _navigation.NavigateTo("Chat");
         }
     }
 

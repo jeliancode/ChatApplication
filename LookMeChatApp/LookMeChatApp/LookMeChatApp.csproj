@@ -21,6 +21,7 @@
 </PropertyGroup>
   <ItemGroup>
     <None Remove="Presentation\View\LoginPage.xaml" />
+    <None Remove="Presentation\View\RoomsPage.xaml" />
     <None Remove="Presentation\View\SignUpPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +34,12 @@
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Presentation\View\LoginPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\ChatPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\RoomsPage.xaml" />
   </ItemGroup>
 
 

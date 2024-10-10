@@ -18,7 +18,7 @@ namespace LookMeChatApp.Infraestructure.Services
         public MessagesManager()
         {
             _serializer = new JSONSerializable<ChatMessage>();
-            server = "test.mosquitto.org";
+            server = "146.190.213.152";
         }
 
         public async Task ConnectToMqttBrokerAsync()
@@ -38,7 +38,7 @@ namespace LookMeChatApp.Infraestructure.Services
         private async Task SubscribeToTopicAsync()
         {
             var topic = new MqttTopicFilterBuilder()
-                .WithTopic("/room/+/messages")
+                .WithTopic("/v1/room/+/messages")
                 .Build();
 
             await _mqttClient.SubscribeAsync(topic);
@@ -47,10 +47,10 @@ namespace LookMeChatApp.Infraestructure.Services
         public async Task SendMessageAsync(ChatMessage messageSent)
         {
 
-            string messageSerialized = _serializer.Serialize(messageSent); // AJUSTAR PARA VERSIONES DE PATH
+            string messageSerialized = _serializer.Serialize(messageSent);
 
             var message = new MqttApplicationMessageBuilder()
-                .WithTopic("/room/jesus/messages")
+                .WithTopic("/v1/room/jesus/messages")
                 .WithPayload(messageSerialized)
                 .Build();
 
@@ -60,7 +60,7 @@ namespace LookMeChatApp.Infraestructure.Services
         public Task ReceiveMessageAsync(MqttApplicationMessageReceivedEventArgs e)
         {
             string messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
-            ChatMessage receivedMessage = _serializer.Deserialize(messageContent); //AJUSTAR PARA VERSIONNES DE PATH
+            ChatMessage receivedMessage = _serializer.Deserialize(messageContent);
             MessageReceived?.Invoke(receivedMessage);
 
             return Task.CompletedTask;

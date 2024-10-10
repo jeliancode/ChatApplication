@@ -1,0 +1,88 @@
+﻿<Page x:Class="LookMeChatApp.Presentation.View.RoomsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:model="using:LookMeChatApp.Domain.Model"
+      xmlns:viewModel="using:LookMeChatApp.ApplicationLayer.ViewModel"
+      Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+  <Grid Background="#15072C">
+    
+    <!-- Encabezado -->
+    <Grid Background="#15072C" Height="70" VerticalAlignment="Top">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      
+      <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Height="70">
+        <Image Source="ms-appx:///Assets/Images/user.png" Width="50" Height="50" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Center" Stretch="UniformToFill"/>
+        <TextBlock Text="LookMe" VerticalAlignment="Center" Foreground="White" FontSize="16" Margin="10,0,0,10"/>
+      </StackPanel>
+      
+      <Button Grid.Column="1" Content="Logout" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="White" Background="#8230A8"
+      Command="{x:Bind _roomsViewModel.LogoutCommand}" Width="100"/>
+    </Grid>
+    
+    <!-- Lista de salas de chat -->
+    <ListView x:Name="RoomsList" ItemsSource="{x:Bind _roomsViewModel.ChatRooms}" Margin="0,70,0,70" Background="#0E0D3A" VerticalAlignment="Stretch">
+      <ListView.ItemTemplate>
+        <DataTemplate x:DataType="model:Room">
+          <TextBlock Text="{x:Bind RoomName}"  FontSize="20" Foreground="White" Margin="20,10,10,10" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+
+    <!-- Barra de navegación inferior -->
+    <Grid Background="#15072C" VerticalAlignment="Bottom" Height="80" HorizontalAlignment="Stretch">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+
+      <!-- Botón Create room -->
+      <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Button Command="{x:Bind _roomsViewModel.CreateRoomCommand}" VerticalAlignment="Center" Background="Transparent">
+          <Button.Template>
+            <ControlTemplate>
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <Image Source="ms-appx:///Assets/Images/createGroup.png" Width="40" Height="40"/>
+                <TextBlock Text="Create room" FontSize="12" Foreground="White" TextAlignment="Center" Margin="0,5,0,0"/>
+              </StackPanel>
+            </ControlTemplate>
+          </Button.Template>
+        </Button>
+      </Grid>
+
+      <!-- Botón Join room -->
+      <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Button Command="{x:Bind _roomsViewModel.JoinRoomCommand}" VerticalAlignment="Center" Background="Transparent">
+          <Button.Template>
+            <ControlTemplate>
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <Image Source="ms-appx:///Assets/Images/joinToGroup.png" Width="40" Height="40"/>
+                <TextBlock Text="Join room" FontSize="12" Foreground="White" TextAlignment="Center" Margin="0,5,0,0"/>
+              </StackPanel>
+            </ControlTemplate>
+          </Button.Template>
+        </Button>
+      </Grid>
+
+      <!-- Botón New chat -->
+      <Grid Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Button Command="{x:Bind _roomsViewModel.NewChatCommand}" VerticalAlignment="Center" Background="Transparent">
+          <Button.Template>
+            <ControlTemplate>
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                <Image Source="ms-appx:///Assets/Images/newChat.png" Width="40" Height="40"/>
+                <TextBlock Text="New chat" FontSize="12" Foreground="White" TextAlignment="Center" Margin="0,5,0,0"/>
+              </StackPanel>
+            </ControlTemplate>
+          </Button.Template>
+        </Button>
+      </Grid>
+    </Grid>
+
+  </Grid>
+</Page>
