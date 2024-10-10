@@ -11,7 +11,8 @@ public sealed partial class LoginPage : Page
     public LoginPage()
     {
         this.InitializeComponent();
-        _viewModel = new LoginViewModel(App.NavigationService);
+        var userRepository = App.SQLiteDb.UserRepository;
+        _viewModel = new LoginViewModel(App.NavigationService, userRepository);
         this.DataContext = _viewModel;
     }
 }

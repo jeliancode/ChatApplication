@@ -22,8 +22,8 @@ public sealed partial class SignUpPage : Page
     public SignUpPage()
     {
         this.InitializeComponent();
-
-        _viewModel = new SignUpViewModel(App.NavigationService);
+        var userRepository = App.SQLiteDb.UserRepository;
+        _viewModel = new SignUpViewModel(App.NavigationService, userRepository);
         this.DataContext = _viewModel;
     }
 }

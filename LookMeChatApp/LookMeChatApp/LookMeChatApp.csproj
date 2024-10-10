@@ -26,6 +26,7 @@
   <ItemGroup>
     <PackageReference Include="MessagePack" />
     <PackageReference Include="MQTTnet" />
+    <PackageReference Include="sqlite-net-pcl" />
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Presentation\View\SignUpPage.xaml" />

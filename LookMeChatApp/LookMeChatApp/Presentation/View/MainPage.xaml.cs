@@ -13,24 +13,21 @@ public sealed partial class MainPage : Page
     public MainPage()
     {
         this.InitializeComponent();
-        var messagesManager = new MessagesManager(OnMessageReceived);
+        var messagesManager = new MessagesManager();
         var sendMessageUseCase = new SendMessageUseCase(messagesManager);
         var receiveMessageUseCase = new ReceiveMessageUseCase(messagesManager);
-
-        _chatViewModel = new ChatViewModel(sendMessageUseCase, receiveMessageUseCase);
+        var messageRepository = App.SQLiteDb.MessageRepository;
+        _chatViewModel = new ChatViewModel(sendMessageUseCase, receiveMessageUseCase, messageRepository);
         this.DataContext = _chatViewModel;
+
+        messagesManager.MessageReceived += OnMessageReceived;
     }
 
-    private void OnMessageReceived(string message)
+    private void OnMessageReceived(ChatMessage message)
     {
         DispatcherQueue.TryEnqueue(() =>
         {
             _chatViewModel.OnMessageReceived(message);
         });
-    }
-
-    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-    {
-        base.OnNavigatingFrom(e);
     }
 }

@@ -4,6 +4,8 @@ using Uno.Resizetizer;
 using LookMeChatApp.Presentation.View;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Infraestructure.Services;
+using LookMeChatApp.Infraestructure.Repositories;
+using SQLitePCL;
 
 namespace LookMeChatApp;
 public partial class App : Application
@@ -14,9 +16,15 @@ public partial class App : Application
     /// </summary>
     /// 
     public static INavigation NavigationService { get; private set; }
+    public static SQLiteDb SQLiteDb { get; private set; }
+
     public App()
     {
         this.InitializeComponent();
+        var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LookMeChatApp.db3");
+        SQLiteDb = new SQLiteDb(dbPath);
+
+        var path = ($"DB PATH: {dbPath}");
     }
 
     protected Window? MainWindow { get; private set; }

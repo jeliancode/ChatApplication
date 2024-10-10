@@ -35,8 +35,8 @@
     <ListView x:Name="MessagesList" Margin="0,70,0,70" Background="#0E0D3A" VerticalAlignment="Stretch" ItemsSource="{x:Bind _chatViewModel.Messages, Mode=OneWay}">
       <ListView.ItemTemplate>
         <DataTemplate x:DataType="model:ChatMessage">
-          <StackPanel Margin="10" HorizontalAlignment="{Binding IsSentByUser, Converter={StaticResource HorizontalAlignmentConverter}}">
-            <Border Background="{Binding IsSentByUser, Converter={StaticResource BackgroundColorConverter}}" 
+          <StackPanel Margin="10" HorizontalAlignment="{Binding SenderId, Converter={StaticResource HorizontalAlignmentConverter}}">
+            <Border Background="{Binding SenderId, Converter={StaticResource BackgroundColorConverter}}" 
                         CornerRadius="10" Padding="10" VerticalAlignment="Center" MaxWidth="250">
               <TextBlock Text="{x:Bind Message}" Foreground="White" TextWrapping="Wrap"/>
             </Border>
