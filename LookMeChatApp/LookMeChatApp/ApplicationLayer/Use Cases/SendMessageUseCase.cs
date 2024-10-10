@@ -7,7 +7,6 @@ public class SendMessageUseCase
 {
     private readonly IMessageHandler _messageHandler;
 
-
     public SendMessageUseCase(IMessageHandler messageHandler)
     {
         _messageHandler = messageHandler;

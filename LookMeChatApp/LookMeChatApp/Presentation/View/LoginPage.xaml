@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="LookMeChatApp.Presentation.View.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LookMeChatApp.Presentation.View"
+    xmlns:viewModel="using:LookMeChatApp.ApplicationLayer.ViewModel"
+    xmlns:converters="using:LookMeChatApp.ApplicationLayer.Converters"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+  <Page.Resources>
+    <converters:StringVisibilityConverter x:Key="StringVisibilityConverter"/>
+  </Page.Resources>
+  
+  <Grid>
+    <Grid Background="#0E0D3A">
+      <!--Title-->
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
+        <Image Source="ms-appx:///Assets/Images/logoLookMe.png" Width="80" Height="80" Margin="0,0,0,20"/>
+        <TextBlock Text="LookMe" FontSize="36" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
+        <TextBlock Text="Login" FontSize="24" Foreground="White" HorizontalAlignment="Center" Margin="0,20,0,10"/>
+
+        <!--User Data-->
+        <TextBlock Text="Username:" FontSize="16" Foreground="White" Margin="0,0,0,5"/>
+        <TextBox PlaceholderText="Enter username" FontSize="16" Background="White" Foreground="Black" Margin="0,0,0,20" Height="40" Text="{x:Bind _viewModel.Username, Mode=TwoWay}"/>
+        <TextBlock Text="Password:" FontSize="16" Foreground="White" Margin="0,0,0,5"/>
+        <PasswordBox PlaceholderText="Enter password" FontSize="16" Background="White" Foreground="Black" Margin="0,0,0,20" Height="40" Password="{x:Bind _viewModel.Password, Mode=TwoWay}"/>
+
+        <!--Error message-->
+        <TextBlock Text="{x:Bind _viewModel.ErrorMessage, Mode=TwoWay}" FontSize="14" Foreground="White" Margin="0,10,0,0" Visibility="{x:Bind _viewModel.ErrorMessage, Converter={StaticResource StringVisibilityConverter}}" 
+/>
+
+        <!--Navigation buttons-->
+        <Button Content="Login" FontSize="16" Background="#8E24AA" Foreground="White" Height="40" Margin="0,10,0,10" CornerRadius="20" HorizontalAlignment="Center" Command="{x:Bind _viewModel.LoginCommand}"/>
+        <TextBlock Text="Or:" FontSize="16" Foreground="White" HorizontalAlignment="Center" Margin="0,10,0,10"/>
+        <Button Content="SignUp" FontSize="16" Foreground="#8E24AA" Background="Transparent" BorderThickness="0" HorizontalAlignment="Center" Command="{x:Bind _viewModel.MoveToSignUpCommand}"/>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</Page>

@@ -20,10 +20,19 @@
   </UnoFeatures>
 </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MQTTnet" />
+    <None Remove="Presentation\View\LoginPage.xaml" />
+    <None Remove="Presentation\View\SignUpPage.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Presentation\View\" />
+    <PackageReference Include="MessagePack" />
+    <PackageReference Include="MQTTnet" />
+    <PackageReference Include="sqlite-net-pcl" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\SignUpPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\LoginPage.xaml" />
   </ItemGroup>
 
 

@@ -1,62 +1,70 @@
 using LookMeChatApp.ApplicationLayer.Use_Cases;
+using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Domain.Model;
+using LookMeChatApp.Infraestructure.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Input;
-
 
 namespace LookMeChatApp.ApplicationLayer.ViewModel;
 
 public class ChatViewModel : INotifyPropertyChanged
 {
+    public string MessageInput { get; set; }
     public event PropertyChangedEventHandler? PropertyChanged;
     private readonly SendMessageUseCase _sendMessageUseCase;
     private readonly ReceiveMessageUseCase _receiveMessageUseCase;
-
-    public ObservableCollection<ChatMessage> Messages { get; set; }
+    private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
-    public string MessageInput { get; set; }
-
-    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ReceiveMessageUseCase receiveMessageUseCase)
+    private readonly AccountSessionService _accountSessionService;
+    private ObservableCollection<ChatMessage> _messages;
+    public ObservableCollection<ChatMessage> Messages 
     {
-        
+        get => _messages;
+        set
+        {
+            _messages = value;
+            OnPropertyChanged(nameof(Messages));
+        }
+    }
+
+
+    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ReceiveMessageUseCase receiveMessageUseCase, IMessageRepository messageRepository)
+    {       
         _sendMessageUseCase = sendMessageUseCase;
         _receiveMessageUseCase = receiveMessageUseCase;
-        Messages = new ObservableCollection<ChatMessage>();
-
+        _accountSessionService = new AccountSessionService();
+        _messages = new ObservableCollection<ChatMessage>();
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
         _receiveMessageUseCase.ExecuteAsync();
+        _messageRepository = messageRepository;
     }
 
     private async Task SendMessage()
     {
         if (!string.IsNullOrWhiteSpace(MessageInput))
         {
+            Guid userId = _accountSessionService.GetCurrentUserId();
             var message = new ChatMessage
             {
                 Id = Guid.NewGuid(),
                 Message = MessageInput,
-                SenderId = Guid.NewGuid(),
+                SenderId = userId,
                 Room = "room",
                 Timestamp = DateTime.UtcNow.ToString(),
-                IsSentByUser = true
             };
 
-            Messages.Add(message);
+           // Messages.Add(message);
+
             MessageInput = string.Empty;
-            await _sendMessageUseCase.ExecuteAsync(message);
             OnPropertyChanged(nameof(MessageInput));
+
+            await _sendMessageUseCase.ExecuteAsync(message);  
         }
     }
 
-    public void OnMessageReceived(string messageContent)
+    public async void OnMessageReceived(ChatMessage receivedMessage)
     {
-        var receivedMessage = new ChatMessage
-        {
-            Message = messageContent,
-            IsSentByUser = false
-        };
-
+        await SaveMessage(receivedMessage);
         Messages.Add(receivedMessage);
     }
 
@@ -65,5 +73,10 @@ public class ChatViewModel : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-}
 
+    private async Task SaveMessage(ChatMessage message)
+    {
+
+        await _messageRepository.AddMessageAsync(message);
+    }
+}
