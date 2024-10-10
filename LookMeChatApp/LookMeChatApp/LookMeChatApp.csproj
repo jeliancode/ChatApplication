@@ -23,7 +23,7 @@
     <PackageReference Include="MQTTnet" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="View\" />
+    <Folder Include="Presentation\View\" />
   </ItemGroup>
 
 

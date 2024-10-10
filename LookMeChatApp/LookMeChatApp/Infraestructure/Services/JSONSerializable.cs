@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using LookMeChatApp.Interface;
+using LookMeChatApp.Domain.Interface;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace LookMeChatApp.Services;
+namespace LookMeChatApp.Infraestructure.Services;
 public class JSONSerializable<A> : ISerializable<A>
 {
     public A Deserialize(string dataToDeserialize)
