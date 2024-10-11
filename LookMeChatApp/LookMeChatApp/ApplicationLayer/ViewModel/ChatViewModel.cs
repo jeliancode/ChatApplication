@@ -11,11 +11,13 @@ public class ChatViewModel : INotifyPropertyChanged
 {
     public string MessageInput { get; set; }
     public event PropertyChangedEventHandler? PropertyChanged;
+    private readonly ConnectClientUseCase _connectClientUseCase;
+    private readonly SubscribToTopicUseCase _subscribeToTopicUseCase;
     private readonly SendMessageUseCase _sendMessageUseCase;
-    private readonly ReceiveMessageUseCase _receiveMessageUseCase;
+    private readonly AccountSessionService _accountSessionService;
     private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
-    private readonly AccountSessionService _accountSessionService;
+    
     private ObservableCollection<ChatMessage> _messages;
     public ObservableCollection<ChatMessage> Messages 
     {
@@ -28,15 +30,20 @@ public class ChatViewModel : INotifyPropertyChanged
     }
 
 
-    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ReceiveMessageUseCase receiveMessageUseCase, IMessageRepository messageRepository)
-    {       
+    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ConnectClientUseCase receiveMessageUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase subscribToTopicUseCase)
+    {
+        _connectClientUseCase = receiveMessageUseCase;
         _sendMessageUseCase = sendMessageUseCase;
-        _receiveMessageUseCase = receiveMessageUseCase;
+        _subscribeToTopicUseCase = subscribToTopicUseCase;
+        _messageRepository = messageRepository;
+
         _accountSessionService = new AccountSessionService();
         _messages = new ObservableCollection<ChatMessage>();
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
-        _receiveMessageUseCase.ExecuteAsync();
-        _messageRepository = messageRepository;
+
+        _connectClientUseCase.ExecuteAsync();
+        _subscribeToTopicUseCase.ExecuteAsync();
+        
     }
 
     private async Task SendMessage()

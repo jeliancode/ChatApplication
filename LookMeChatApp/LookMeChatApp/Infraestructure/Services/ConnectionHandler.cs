@@ -7,46 +7,51 @@ using MQTTnet.Server;
 
 namespace LookMeChatApp.Infraestructure.Services
 {
-    public class MessagesManager : IMessageHandler
+    public class ConnectionHandler : IConnectionHandler
     {
         public event Action<ChatMessage> MessageReceived;
         private IMqttClient? _mqttClient;
+        private MqttFactory _mqttFactory;
+        private MqttClientOptions _options;
         private readonly ISerializable<ChatMessage> _serializer;
         private string server ;
 
-
-        public MessagesManager()
+        public ConnectionHandler()
         {
             _serializer = new JSONSerializable<ChatMessage>();
-            server = "146.190.213.152";
+            server = "test.mosquitto.org";
         }
 
         public async Task ConnectToMqttBrokerAsync()
         {
-            var factory = new MqttFactory();
-            _mqttClient = factory.CreateMqttClient();
+            _mqttFactory = new MqttFactory(); //Connection
+            _mqttClient = _mqttFactory.CreateMqttClient(); //Connection (mqqTClien)
 
-            var options = new MqttClientOptionsBuilder()
+            _options = new MqttClientOptionsBuilder() //Connection
                 .WithTcpServer(server)
                 .Build();
-
-            _mqttClient.ApplicationMessageReceivedAsync += ReceiveMessageAsync;
-            await _mqttClient.ConnectAsync(options, CancellationToken.None);
-            await SubscribeToTopicAsync();
         }
 
-        private async Task SubscribeToTopicAsync()
+        public async Task SubscribeToTopicAsync()
         {
-            var topic = new MqttTopicFilterBuilder()
+            _mqttClient.ConnectedAsync += e =>
+            {
+                var topic = new MqttTopicFilterBuilder()
                 .WithTopic("/v1/room/+/messages")
                 .Build();
 
-            await _mqttClient.SubscribeAsync(topic);
+            _mqttClient.SubscribeAsync(topic);
+            return Task.CompletedTask;
+            };
+
+            _mqttClient.ApplicationMessageReceivedAsync += ReceiveMessageAsync;
+
+            await _mqttClient.ConnectAsync(_options, CancellationToken.None);
         }
 
         public async Task SendMessageAsync(ChatMessage messageSent)
         {
-
+            _mqttClient.ConnectAsync(_options, CancellationToken.None);
             string messageSerialized = _serializer.Serialize(messageSent);
 
             var message = new MqttApplicationMessageBuilder()

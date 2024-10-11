@@ -16,6 +16,7 @@ public partial class App : Application
     /// </summary>
     /// 
     public static INavigation NavigationService { get; private set; }
+    public static IConnectionHandler ConnectionHandler { get; private set; }
     public static SQLiteDb SQLiteDb { get; private set; }
 
     public App()
@@ -23,8 +24,8 @@ public partial class App : Application
         this.InitializeComponent();
         var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LookMeChatApp.db3");
         SQLiteDb = new SQLiteDb(dbPath);
-
         var path = ($"DB PATH: {dbPath}");
+        ConnectionHandler = new ConnectionHandler();
     }
 
     protected Window? MainWindow { get; private set; }
@@ -57,7 +58,7 @@ public partial class App : Application
             // When the navigation stack isn't restored navigate to the first page,
             // configuring the new page by passing required information as a navigation
             // parameter
-            rootFrame.Navigate(typeof(RoomsPage), args.Arguments);
+            rootFrame.Navigate(typeof(ChatPage), args.Arguments);
         }
 
         MainWindow.SetWindowIcon();

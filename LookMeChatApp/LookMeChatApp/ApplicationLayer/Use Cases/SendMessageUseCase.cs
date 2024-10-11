@@ -5,9 +5,9 @@ namespace LookMeChatApp.ApplicationLayer.Use_Cases;
 
 public class SendMessageUseCase
 {
-    private readonly IMessageHandler _messageHandler;
+    private readonly IConnectionHandler _messageHandler;
 
-    public SendMessageUseCase(IMessageHandler messageHandler)
+    public SendMessageUseCase(IConnectionHandler messageHandler)
     {
         _messageHandler = messageHandler;
     }
