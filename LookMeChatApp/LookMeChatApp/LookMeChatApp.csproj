@@ -2,6 +2,8 @@
   <PropertyGroup>
   <TargetFrameworks>net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop</TargetFrameworks>
 
+<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
   <OutputType>Exe</OutputType>
   <UnoSingleProject>true</UnoSingleProject>
 
@@ -21,6 +23,7 @@
 </PropertyGroup>
   <ItemGroup>
     <None Remove="Presentation\View\LoginPage.xaml" />
+    <None Remove="Presentation\View\RoomsPage.xaml" />
     <None Remove="Presentation\View\SignUpPage.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +36,12 @@
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Presentation\View\LoginPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\ChatPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\RoomsPage.xaml" />
   </ItemGroup>
 
 

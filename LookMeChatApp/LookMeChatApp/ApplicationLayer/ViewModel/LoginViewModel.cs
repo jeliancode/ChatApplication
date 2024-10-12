@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Infraestructure.Services;
 using LookMeChatApp.Model;
@@ -50,8 +45,9 @@ public class LoginViewModel
             return;
         }
 
+        _accountSessionService.SetCurrentUsername(user.Username);
         _accountSessionService.SetCurrentUserId(user.IdUser);
-        _navigation.NavigateTo("Main");
+        _navigation.NavigateTo("Rooms");
     }
 
     private void ExecuteMoveToSignUpCommand()

@@ -23,7 +23,6 @@ public partial class App : Application
         this.InitializeComponent();
         var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LookMeChatApp.db3");
         SQLiteDb = new SQLiteDb(dbPath);
-
         var path = ($"DB PATH: {dbPath}");
     }
 

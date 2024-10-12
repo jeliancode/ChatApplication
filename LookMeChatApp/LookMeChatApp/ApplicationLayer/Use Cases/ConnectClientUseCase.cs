@@ -8,17 +8,17 @@ using LookMeChatApp.Domain.Interface;
 
 namespace LookMeChatApp.ApplicationLayer.Use_Cases;
 
-public class ReceiveMessageUseCase
+public class ConnectClientUseCase : IMqttUseCase
 {
-    private readonly IMessageHandler _messageHandler;
+    private readonly IConnectionHandler _connectionHandler;
 
-    public ReceiveMessageUseCase(IMessageHandler messageHandler)
+    public ConnectClientUseCase(IConnectionHandler connectionHandler)
     {
-        _messageHandler = messageHandler;
+        _connectionHandler = connectionHandler;
     }
 
     public async Task ExecuteAsync()
     {
-        await _messageHandler.ConnectToMqttBrokerAsync();
+        await _connectionHandler.ConnectToMqttBrokerAsync();
     }
 }

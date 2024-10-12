@@ -11,13 +11,40 @@ public class ChatViewModel : INotifyPropertyChanged
 {
     public string MessageInput { get; set; }
     public event PropertyChangedEventHandler? PropertyChanged;
+    private readonly ConnectClientUseCase _connectClientUseCase;
+    private readonly SubscribToTopicUseCase _subscribeToTopicUseCase;
     private readonly SendMessageUseCase _sendMessageUseCase;
-    private readonly ReceiveMessageUseCase _receiveMessageUseCase;
+    private readonly AccountSessionService _accountSessionService;
+    private readonly TopicSessionService _topicSessionService;
+    private readonly INavigation navigation;
     private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
-    private readonly AccountSessionService _accountSessionService;
+    public ICommand ComeBackCommand { get; }
+    
     private ObservableCollection<ChatMessage> _messages;
-    public ObservableCollection<ChatMessage> Messages 
+
+    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ConnectClientUseCase connectClientUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase subscribToTopicUseCase)
+    {
+        _connectClientUseCase = connectClientUseCase;
+        _sendMessageUseCase = sendMessageUseCase;
+        _subscribeToTopicUseCase = subscribToTopicUseCase;
+        _messageRepository = messageRepository;
+        _connectClientUseCase.ExecuteAsync();
+
+        navigation = App.NavigationService;
+        _accountSessionService = new AccountSessionService();
+        _topicSessionService = new TopicSessionService();
+        _messages = new ObservableCollection<ChatMessage>();
+
+        SendMessageCommand = new RelayCommand(async () => await SendMessage());
+        ComeBackCommand = new RelayCommand(ComeBack);
+
+        _connectClientUseCase.ExecuteAsync();
+        _subscribeToTopicUseCase.ExecuteAsync();
+        
+    }
+
+    public ObservableCollection<ChatMessage> Messages
     {
         get => _messages;
         set
@@ -25,18 +52,6 @@ public class ChatViewModel : INotifyPropertyChanged
             _messages = value;
             OnPropertyChanged(nameof(Messages));
         }
-    }
-
-
-    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ReceiveMessageUseCase receiveMessageUseCase, IMessageRepository messageRepository)
-    {       
-        _sendMessageUseCase = sendMessageUseCase;
-        _receiveMessageUseCase = receiveMessageUseCase;
-        _accountSessionService = new AccountSessionService();
-        _messages = new ObservableCollection<ChatMessage>();
-        SendMessageCommand = new RelayCommand(async () => await SendMessage());
-        _receiveMessageUseCase.ExecuteAsync();
-        _messageRepository = messageRepository;
     }
 
     private async Task SendMessage()
@@ -49,17 +64,23 @@ public class ChatViewModel : INotifyPropertyChanged
                 Id = Guid.NewGuid(),
                 Message = MessageInput,
                 SenderId = userId,
-                Room = "room",
+                Room = _topicSessionService.GetCurrentTopic(),
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
-           // Messages.Add(message);
+
 
             MessageInput = string.Empty;
             OnPropertyChanged(nameof(MessageInput));
 
             await _sendMessageUseCase.ExecuteAsync(message);  
         }
+    }
+
+    private void ComeBack()
+    {
+        _topicSessionService.ClearCurrentTopicData();
+        navigation.ComeBack();
     }
 
     public async void OnMessageReceived(ChatMessage receivedMessage)
@@ -76,7 +97,6 @@ public class ChatViewModel : INotifyPropertyChanged
 
     private async Task SaveMessage(ChatMessage message)
     {
-
         await _messageRepository.AddMessageAsync(message);
     }
 }
