@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Infraestructure.Services;
 using LookMeChatApp.Model;

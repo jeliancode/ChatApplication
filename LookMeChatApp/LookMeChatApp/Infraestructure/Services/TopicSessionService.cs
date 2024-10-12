@@ -35,4 +35,10 @@ public class TopicSessionService
             .Values[CurrentUserPath] as string;
         return !string.IsNullOrEmpty(currentUserPath)? currentUserPath : string.Empty;
     }
+
+    public void ClearCurrentTopicData()
+    {
+        ApplicationData.Current.LocalSettings.Values.Remove(CurrentTopic);
+        ApplicationData.Current.LocalSettings.Values.Remove(CurrentUserPath);
+    }
 }

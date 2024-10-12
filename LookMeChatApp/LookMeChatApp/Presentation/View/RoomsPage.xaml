@@ -48,7 +48,6 @@
         <ColumnDefinition Width="*" />
       </Grid.ColumnDefinitions>
 
-      <!-- Botón Create room -->
       <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Height="80">
         <TextBox x:Name="RoomNameTextBox" PlaceholderText="Room name" Height="20" VerticalAlignment="Top" HorizontalAlignment="Center"
                  Text="{Binding RoomName, Mode=TwoWay}"/>
@@ -64,7 +63,6 @@
         </Button>
       </Grid>
 
-      <!-- Botón Join room -->
       <Grid Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
         <Button Command="{x:Bind _roomsViewModel.JoinRoomCommand}" VerticalAlignment="Center" Background="Transparent">
           <Button.Template>
@@ -78,7 +76,6 @@
         </Button>
       </Grid>
 
-      <!-- Botón New chat -->
       <Grid Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
         <Button Command="{x:Bind _roomsViewModel.NewChatCommand}" VerticalAlignment="Center" Background="Transparent">
           <Button.Template>

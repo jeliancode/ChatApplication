@@ -15,8 +15,11 @@ public class ChatViewModel : INotifyPropertyChanged
     private readonly SubscribToTopicUseCase _subscribeToTopicUseCase;
     private readonly SendMessageUseCase _sendMessageUseCase;
     private readonly AccountSessionService _accountSessionService;
+    private readonly TopicSessionService _topicSessionService;
+    private readonly INavigation navigation;
     private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
+    public ICommand ComeBackCommand { get; }
     
     private ObservableCollection<ChatMessage> _messages;
 
@@ -26,11 +29,15 @@ public class ChatViewModel : INotifyPropertyChanged
         _sendMessageUseCase = sendMessageUseCase;
         _subscribeToTopicUseCase = subscribToTopicUseCase;
         _messageRepository = messageRepository;
-
         _connectClientUseCase.ExecuteAsync();
+
+        navigation = App.NavigationService;
         _accountSessionService = new AccountSessionService();
+        _topicSessionService = new TopicSessionService();
         _messages = new ObservableCollection<ChatMessage>();
+
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
+        ComeBackCommand = new RelayCommand(ComeBack);
 
         _connectClientUseCase.ExecuteAsync();
         _subscribeToTopicUseCase.ExecuteAsync();
@@ -57,7 +64,7 @@ public class ChatViewModel : INotifyPropertyChanged
                 Id = Guid.NewGuid(),
                 Message = MessageInput,
                 SenderId = userId,
-                Room = "room",
+                Room = _topicSessionService.GetCurrentTopic(),
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
@@ -68,6 +75,12 @@ public class ChatViewModel : INotifyPropertyChanged
 
             await _sendMessageUseCase.ExecuteAsync(message);  
         }
+    }
+
+    private void ComeBack()
+    {
+        _topicSessionService.ClearCurrentTopicData();
+        navigation.ComeBack();
     }
 
     public async void OnMessageReceived(ChatMessage receivedMessage)
@@ -84,7 +97,6 @@ public class ChatViewModel : INotifyPropertyChanged
 
     private async Task SaveMessage(ChatMessage message)
     {
-
         await _messageRepository.AddMessageAsync(message);
     }
 }

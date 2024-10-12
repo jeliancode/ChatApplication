@@ -19,7 +19,8 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
 
-      <Button Grid.Column="0" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Content="←" Foreground="White"/>
+      <Button Grid.Column="0" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Center" Content="←" Foreground="White"
+              Command="{x:Bind _chatViewModel.ComeBackCommand}"/>
 
       <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
         <Image Source="ms-appx:///Assets/Images/user.png" Width="40" Height="40"/>
