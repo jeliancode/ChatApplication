@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SQLite;
 
 namespace LookMeChatApp.Domain.Model;
 public class Room
 {
+    [PrimaryKey, Unique]
     public Guid Id { get; set; }
+    [NotNull]
     public string RoomName { get; set; }
+    [NotNull]
+    public string topicPath {  get; set; }
 }

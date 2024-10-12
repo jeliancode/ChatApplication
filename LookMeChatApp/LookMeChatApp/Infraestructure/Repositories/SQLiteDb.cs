@@ -8,6 +8,7 @@ public class SQLiteDb
     private readonly SQLiteAsyncConnection _sQLiteAsync;
     public UserRepository UserRepository { get; set; }
     public MessageRepository MessageRepository { get; set; }
+    public RoomRepository RoomRepository { get; set; }
 
     public SQLiteDb(string dbPath)
     {
@@ -15,8 +16,10 @@ public class SQLiteDb
         _sQLiteAsync.CreateTableAsync<User>().Wait();
         _sQLiteAsync.CreateTableAsync<ChatMessage>().Wait();
         _sQLiteAsync.CreateTableAsync<Friend>().Wait();
+        _sQLiteAsync.CreateTableAsync<Room>().Wait();
 
         UserRepository = new UserRepository(_sQLiteAsync);
         MessageRepository = new MessageRepository(_sQLiteAsync);
+        RoomRepository = new RoomRepository(_sQLiteAsync);
     }
 }
