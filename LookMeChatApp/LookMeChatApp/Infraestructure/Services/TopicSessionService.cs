@@ -1,8 +1,8 @@
 namespace LookMeChatApp.Infraestructure.Services;
 public class TopicSessionService
 {
-    private string CurrentTopic = "CurrentTopic";
-    private string CurrentUserPath = "CurrentUserPath";
+    private string CurrentVersion = "CurrentVersion";
+    private string CurrentRoomName = "CurrentRoomName";
     private readonly AccountSessionService accountSessionService;
 
     public TopicSessionService()
@@ -10,35 +10,37 @@ public class TopicSessionService
         accountSessionService = new AccountSessionService();
     }
 
-    public void SetCurrentTopic(string version, string room)
+    public void SetCurrentVersion(string version)
     {
-        var newTopicPath = $"/{version}/room/+/{room}";
-        ApplicationData.Current.LocalSettings.Values[CurrentTopic] = newTopicPath;
+        ApplicationData.Current.LocalSettings.Values[CurrentVersion] = version;
     }
 
-    public void SetUserPath(string version, string room)
+    public void SetUserPath(string room)
     {
-        var username = accountSessionService.GetCurrentUsername();
-        var newUserPath = $"/{version}/room/{username}/{room}";
-        ApplicationData.Current.LocalSettings.Values[CurrentUserPath] = newUserPath;
-    }
-    public string GetCurrentTopic()
-    {
-        var currentTopicPath = ApplicationData.Current.LocalSettings
-            .Values[CurrentTopic] as string;
-        return !string.IsNullOrEmpty(currentTopicPath)? currentTopicPath : string.Empty;
+        ApplicationData.Current.LocalSettings.Values[CurrentRoomName] = room;
     }
 
-    public string GetCurrentUserPath()
+    public string GetCurrentVersion()
     {
-        var currentUserPath = ApplicationData.Current.LocalSettings
-            .Values[CurrentUserPath] as string;
-        return !string.IsNullOrEmpty(currentUserPath)? currentUserPath : string.Empty;
+        var currentVersion = ApplicationData.Current.LocalSettings
+            .Values[CurrentVersion] as string;
+        return !string.IsNullOrEmpty(currentVersion) ? currentVersion : string.Empty;
     }
 
-    public void ClearCurrentTopicData()
+    public string GetCurrentRoomName()
     {
-        ApplicationData.Current.LocalSettings.Values.Remove(CurrentTopic);
-        ApplicationData.Current.LocalSettings.Values.Remove(CurrentUserPath);
+        var currentRoomName = ApplicationData.Current.LocalSettings
+            .Values[CurrentRoomName] as string;
+        return !string.IsNullOrEmpty(currentRoomName)? currentRoomName : string.Empty;
+    }
+
+    public void ClearCurrentRoomName()
+    {
+        ApplicationData.Current.LocalSettings.Values.Remove(CurrentVersion);
+    }
+
+    public void ClearCurrentVersion()
+    {
+        ApplicationData.Current.LocalSettings.Values.Remove(CurrentRoomName);
     }
 }

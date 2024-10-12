@@ -4,31 +4,38 @@ using LookMeChatApp.Domain.Model;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.ApplicationLayer.Use_Cases;
 using LookMeChatApp.Infraestructure.Services;
+using LookMeChatApp.Infraestructure.Repositories;
 
 namespace LookMeChatApp.ApplicationLayer.ViewModel;
 
 public class RoomsViewModel : INotifyPropertyChanged
 {
     public ObservableCollection<Room> ChatRooms { get; set; }
+    public ObservableCollection<ChatMessage> Messages { get; set; }
+
     public ICommand CreateRoomCommand { get; }
     public ICommand JoinRoomCommand { get; }
     public ICommand NewChatCommand { get; }
     public ICommand LogoutCommand { get; }
     public ICommand EnterRoomCommand { get; }
-    private readonly INavigation _navigation;
-    private readonly TopicSessionService _topicSessionService;
+    private readonly INavigation navigation;
+    private readonly SQLiteDb sQLiteDb;
+    private readonly TopicSessionService topicSessionService;
     private Room _selectedRoom;
     private string _selectedVersion;
     private string _roomName;
+
 
     public event PropertyChangedEventHandler PropertyChanged;
 
     public RoomsViewModel()
     {
         ChatRooms = new ObservableCollection<Room>();
-        _navigation = App.NavigationService;
-        _topicSessionService = new TopicSessionService();
-
+        Messages = new ObservableCollection<ChatMessage>();
+        topicSessionService = new TopicSessionService();
+        navigation = App.NavigationService;
+        sQLiteDb = App.SQLiteDb;
+        
         CreateRoomCommand = new RelayCommand(CreateRoom);
         JoinRoomCommand = new RelayCommand(JoinRoom);
         NewChatCommand = new RelayCommand(NewChat);
@@ -70,10 +77,26 @@ public class RoomsViewModel : INotifyPropertyChanged
 
     private async void LoadRoomsAsync()
     {
-        var rooms = await App.SQLiteDb.RoomRepository.GetAllRoomsAsync();
+        var roomsRepository = sQLiteDb.RoomRepository;
+
+        var rooms = await roomsRepository.GetAllRoomsAsync();
         foreach (var room in rooms)
         {
             ChatRooms.Add(room);
+        }
+    }
+
+    private async Task LoadMessagesAsync(string room)
+    {
+        var messagesRepository = sQLiteDb.MessageRepository;
+        var messagesList = await messagesRepository.GetMessagesByRoom(room);
+
+        Messages.Clear();
+
+        foreach (var message in messagesList)
+        {
+            Messages.Add(message);
+
         }
     }
 
@@ -81,9 +104,9 @@ public class RoomsViewModel : INotifyPropertyChanged
     {
         if (SelectedRoom != null && !string.IsNullOrEmpty(SelectedVersion))
         {
-            _topicSessionService.SetCurrentTopic(_selectedVersion, _selectedRoom.RoomName);
-            _topicSessionService.SetUserPath(_selectedVersion, _selectedRoom.RoomName);
-            _navigation.NavigateTo("Chat");
+            topicSessionService.SetCurrentVersion(_selectedVersion);
+            topicSessionService.SetUserPath(_selectedRoom.RoomName);
+            navigation.NavigateTo("Chat");
         }
     }
 
@@ -91,11 +114,12 @@ public class RoomsViewModel : INotifyPropertyChanged
     {
         if (!string.IsNullOrWhiteSpace(RoomName))
         {
+            topicSessionService.ClearCurrentVersion();
+
             var newRoom = new Room
             {
                 Id = Guid.NewGuid(),
-                RoomName = RoomName,
-                topicPath = _topicSessionService.GetCurrentTopic()
+                RoomName = _roomName,
             };
 
             await App.SQLiteDb.RoomRepository.AddRoomAsync(newRoom);

@@ -5,8 +5,6 @@ public class Room
 {
     [PrimaryKey, Unique]
     public Guid Id { get; set; }
-    [NotNull]
+    [NotNull, Unique]
     public string RoomName { get; set; }
-    [NotNull]
-    public string topicPath {  get; set; }
 }

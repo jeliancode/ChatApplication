@@ -1,6 +1,7 @@
 using LookMeChatApp.ApplicationLayer.Use_Cases;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Domain.Model;
+using LookMeChatApp.Infraestructure.Repositories;
 using LookMeChatApp.Infraestructure.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ public class ChatViewModel : INotifyPropertyChanged
     private readonly SendMessageUseCase _sendMessageUseCase;
     private readonly AccountSessionService _accountSessionService;
     private readonly TopicSessionService _topicSessionService;
+    private readonly SQLiteDb sQLiteDb;
     private readonly INavigation navigation;
     private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
@@ -32,6 +34,7 @@ public class ChatViewModel : INotifyPropertyChanged
         _connectClientUseCase.ExecuteAsync();
 
         navigation = App.NavigationService;
+        sQLiteDb = App.SQLiteDb;
         _accountSessionService = new AccountSessionService();
         _topicSessionService = new TopicSessionService();
         _messages = new ObservableCollection<ChatMessage>();
@@ -41,7 +44,8 @@ public class ChatViewModel : INotifyPropertyChanged
 
         _connectClientUseCase.ExecuteAsync();
         _subscribeToTopicUseCase.ExecuteAsync();
-        
+
+        LoadMessagesAsync();
     }
 
     public ObservableCollection<ChatMessage> Messages
@@ -54,6 +58,22 @@ public class ChatViewModel : INotifyPropertyChanged
         }
     }
 
+    private async Task LoadMessagesAsync()
+    {
+        var room = _topicSessionService.GetCurrentRoomName();
+        var messagesRepository = sQLiteDb.MessageRepository;
+        var messagesList = await messagesRepository.GetMessagesByRoom(room);
+
+        Messages.Clear();
+
+        foreach (var message in messagesList)
+        {
+            Messages.Add(message);
+
+        }
+    }
+
+
     private async Task SendMessage()
     {
         if (!string.IsNullOrWhiteSpace(MessageInput))
@@ -64,7 +84,7 @@ public class ChatViewModel : INotifyPropertyChanged
                 Id = Guid.NewGuid(),
                 Message = MessageInput,
                 SenderId = userId,
-                Room = _topicSessionService.GetCurrentTopic(),
+                Room = _topicSessionService.GetCurrentRoomName(),
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
@@ -79,7 +99,7 @@ public class ChatViewModel : INotifyPropertyChanged
 
     private void ComeBack()
     {
-        _topicSessionService.ClearCurrentTopicData();
+        _topicSessionService.ClearCurrentVersion();
         navigation.ComeBack();
     }
 

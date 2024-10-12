@@ -15,6 +15,7 @@ namespace LookMeChatApp.Infraestructure.Services
         private MqttFactory _mqttFactory;
         private MqttClientOptions _options;
         private readonly TopicSessionService _topicSessionService;
+        private readonly AccountSessionService _accountSessionService;
         private string server;
         private string currentUserPath;
         private string topicToSubscribe;
@@ -23,9 +24,13 @@ namespace LookMeChatApp.Infraestructure.Services
         {
             _serializer = new JSONSerializable<ChatMessage>();
             _topicSessionService = new TopicSessionService();
+            _accountSessionService = new AccountSessionService();
 
-            topicToSubscribe = _topicSessionService.GetCurrentTopic();
-            currentUserPath = _topicSessionService.GetCurrentUserPath();
+            var version = _topicSessionService.GetCurrentVersion();
+            var room = _topicSessionService.GetCurrentRoomName();
+            var user = _accountSessionService.GetCurrentUsername();
+            topicToSubscribe = $"/{version}/room/+/{room}";
+            currentUserPath = $"/{version}/room/{user}/{room}";
             server = "test.mosquitto.org";
         }
 

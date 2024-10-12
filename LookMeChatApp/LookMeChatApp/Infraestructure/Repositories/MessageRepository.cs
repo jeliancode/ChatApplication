@@ -27,6 +27,13 @@ public class MessageRepository : IMessageRepository
         };
     }
 
+    public async Task<List<ChatMessage>> GetMessagesByRoom(string roomName)
+    {
+        return await _sQLiteDb.Table<ChatMessage>()
+            .Where(m => m.Room == roomName)
+            .OrderBy(m => m.Timestamp).ToListAsync();
+    }
+
     public async Task<List<ChatMessage>> GetAllMessagesAsync(string room)
     {
         return await _sQLiteDb.Table<ChatMessage>()
