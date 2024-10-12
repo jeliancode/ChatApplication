@@ -50,8 +50,9 @@ public class LoginViewModel
             return;
         }
 
+        _accountSessionService.SetCurrentUsername(user.Username);
         _accountSessionService.SetCurrentUserId(user.IdUser);
-        _navigation.NavigateTo("Main");
+        _navigation.NavigateTo("Rooms");
     }
 
     private void ExecuteMoveToSignUpCommand()

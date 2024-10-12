@@ -13,7 +13,7 @@ public sealed partial class ChatPage : Page
     public ChatPage()
     {
         this.InitializeComponent();
-        var connectionManager = App.ConnectionHandler;
+        var connectionManager = new ConnectionHandler(); ;
         var messageRepository = App.SQLiteDb.MessageRepository;
 
         var connectClientUseCase = new ConnectClientUseCase(connectionManager);

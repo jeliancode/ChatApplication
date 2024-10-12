@@ -44,7 +44,7 @@ public class SignUpViewModel
             {
                 Console.WriteLine("Error: "+e.Message);
             }
-            _navigation.NavigateTo("Chat");
+            _navigation.NavigateTo("Rooms");
         }
     }
 
@@ -69,6 +69,7 @@ public class SignUpViewModel
     private async Task RegisterUserOnDb(User user)
     {
         _accountSessionService.SetCurrentUserId(user.IdUser);
+        _accountSessionService.SetCurrentUsername(user.Username);
         await _userRepository.AddUserAsync(user);       
     }
 }

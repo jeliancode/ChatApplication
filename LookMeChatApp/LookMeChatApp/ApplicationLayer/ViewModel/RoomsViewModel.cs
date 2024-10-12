@@ -3,6 +3,7 @@ using System.ComponentModel;
 using LookMeChatApp.Domain.Model;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.ApplicationLayer.Use_Cases;
+using LookMeChatApp.Infraestructure.Services;
 
 namespace LookMeChatApp.ApplicationLayer.ViewModel;
 
@@ -15,8 +16,9 @@ public class RoomsViewModel : INotifyPropertyChanged
     public ICommand LogoutCommand { get; }
     public ICommand EnterRoomCommand { get; }
     private readonly INavigation _navigation;
-    private string _selectedVersion;
+    private readonly TopicSessionService _topicSessionService;
     private Room _selectedRoom;
+    private string _selectedVersion;
     private string _roomName;
 
     public event PropertyChangedEventHandler PropertyChanged;
@@ -25,6 +27,7 @@ public class RoomsViewModel : INotifyPropertyChanged
     {
         ChatRooms = new ObservableCollection<Room>();
         _navigation = App.NavigationService;
+        _topicSessionService = new TopicSessionService();
 
         CreateRoomCommand = new RelayCommand(CreateRoom);
         JoinRoomCommand = new RelayCommand(JoinRoom);
@@ -78,6 +81,8 @@ public class RoomsViewModel : INotifyPropertyChanged
     {
         if (SelectedRoom != null && !string.IsNullOrEmpty(SelectedVersion))
         {
+            _topicSessionService.SetCurrentTopic(_selectedVersion, _selectedRoom.RoomName);
+            _topicSessionService.SetUserPath(_selectedVersion, _selectedRoom.RoomName);
             _navigation.NavigateTo("Chat");
         }
     }
@@ -90,7 +95,7 @@ public class RoomsViewModel : INotifyPropertyChanged
             {
                 Id = Guid.NewGuid(),
                 RoomName = RoomName,
-                topicPath = GenerateConnectionPath(RoomName)
+                topicPath = _topicSessionService.GetCurrentTopic()
             };
 
             await App.SQLiteDb.RoomRepository.AddRoomAsync(newRoom);
@@ -110,10 +115,6 @@ public class RoomsViewModel : INotifyPropertyChanged
     {
     }
 
-    private string GenerateConnectionPath(string roomName)
-    {
-        return $"/room/+/{roomName}";
-    }
 
     protected virtual void OnPropertyChanged(string propertyName)
     {

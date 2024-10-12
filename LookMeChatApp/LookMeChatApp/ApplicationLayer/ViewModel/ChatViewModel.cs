@@ -19,24 +19,15 @@ public class ChatViewModel : INotifyPropertyChanged
     public ICommand SendMessageCommand { get; }
     
     private ObservableCollection<ChatMessage> _messages;
-    public ObservableCollection<ChatMessage> Messages 
-    {
-        get => _messages;
-        set
-        {
-            _messages = value;
-            OnPropertyChanged(nameof(Messages));
-        }
-    }
 
-
-    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ConnectClientUseCase receiveMessageUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase subscribToTopicUseCase)
+    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ConnectClientUseCase connectClientUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase subscribToTopicUseCase)
     {
-        _connectClientUseCase = receiveMessageUseCase;
+        _connectClientUseCase = connectClientUseCase;
         _sendMessageUseCase = sendMessageUseCase;
         _subscribeToTopicUseCase = subscribToTopicUseCase;
         _messageRepository = messageRepository;
 
+        _connectClientUseCase.ExecuteAsync();
         _accountSessionService = new AccountSessionService();
         _messages = new ObservableCollection<ChatMessage>();
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
@@ -44,6 +35,16 @@ public class ChatViewModel : INotifyPropertyChanged
         _connectClientUseCase.ExecuteAsync();
         _subscribeToTopicUseCase.ExecuteAsync();
         
+    }
+
+    public ObservableCollection<ChatMessage> Messages
+    {
+        get => _messages;
+        set
+        {
+            _messages = value;
+            OnPropertyChanged(nameof(Messages));
+        }
     }
 
     private async Task SendMessage()

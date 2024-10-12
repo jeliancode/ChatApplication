@@ -10,24 +10,31 @@ namespace LookMeChatApp.Infraestructure.Services
     public class ConnectionHandler : IConnectionHandler
     {
         public event Action<ChatMessage> MessageReceived;
+        private readonly ISerializable<ChatMessage> _serializer;
         private IMqttClient? _mqttClient;
         private MqttFactory _mqttFactory;
         private MqttClientOptions _options;
-        private readonly ISerializable<ChatMessage> _serializer;
-        private string server ;
+        private readonly TopicSessionService _topicSessionService;
+        private string server;
+        private string currentUserPath;
+        private string topicToSubscribe;
 
         public ConnectionHandler()
         {
             _serializer = new JSONSerializable<ChatMessage>();
+            _topicSessionService = new TopicSessionService();
+
+            topicToSubscribe = _topicSessionService.GetCurrentTopic();
+            currentUserPath = _topicSessionService.GetCurrentUserPath();
             server = "test.mosquitto.org";
         }
 
         public async Task ConnectToMqttBrokerAsync()
         {
-            _mqttFactory = new MqttFactory(); //Connection
-            _mqttClient = _mqttFactory.CreateMqttClient(); //Connection (mqqTClien)
+            _mqttFactory = new MqttFactory();
+            _mqttClient = _mqttFactory.CreateMqttClient();
 
-            _options = new MqttClientOptionsBuilder() //Connection
+            _options = new MqttClientOptionsBuilder()
                 .WithTcpServer(server)
                 .Build();
         }
@@ -37,7 +44,7 @@ namespace LookMeChatApp.Infraestructure.Services
             _mqttClient.ConnectedAsync += e =>
             {
                 var topic = new MqttTopicFilterBuilder()
-                .WithTopic("/v1/room/+/messages")
+                .WithTopic(topicToSubscribe)
                 .Build();
 
             _mqttClient.SubscribeAsync(topic);
@@ -55,7 +62,7 @@ namespace LookMeChatApp.Infraestructure.Services
             string messageSerialized = _serializer.Serialize(messageSent);
 
             var message = new MqttApplicationMessageBuilder()
-                .WithTopic("/v1/room/jesus/messages")
+                .WithTopic(currentUserPath)
                 .WithPayload(messageSerialized)
                 .Build();
 
