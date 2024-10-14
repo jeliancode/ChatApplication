@@ -11,19 +11,20 @@ namespace LookMeChatApp.ApplicationLayer.ViewModel;
 public class ChatViewModel : INotifyPropertyChanged
 {
     public string MessageInput { get; set; }
-    public event PropertyChangedEventHandler? PropertyChanged;
+    private ObservableCollection<ChatMessage> messages;
     private readonly ConnectClientUseCase _connectClientUseCase;
     private readonly SubscribToTopicUseCase _subscribeToTopicUseCase;
     private readonly SendMessageUseCase _sendMessageUseCase;
     private readonly AccountSessionService _accountSessionService;
     private readonly TopicSessionService _topicSessionService;
+    private readonly AddContactService _addContactService;
     private readonly SQLiteDb sQLiteDb;
     private readonly INavigation navigation;
     private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
     public ICommand ComeBackCommand { get; }
-    
-    private ObservableCollection<ChatMessage> _messages;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public ChatViewModel(SendMessageUseCase sendMessageUseCase, ConnectClientUseCase connectClientUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase subscribToTopicUseCase)
     {
@@ -32,28 +33,26 @@ public class ChatViewModel : INotifyPropertyChanged
         _subscribeToTopicUseCase = subscribToTopicUseCase;
         _messageRepository = messageRepository;
         _connectClientUseCase.ExecuteAsync();
+        _subscribeToTopicUseCase.ExecuteAsync();
 
         navigation = App.NavigationService;
         sQLiteDb = App.SQLiteDb;
         _accountSessionService = new AccountSessionService();
         _topicSessionService = new TopicSessionService();
-        _messages = new ObservableCollection<ChatMessage>();
-
+        _addContactService = new AddContactService();
+        messages = new ObservableCollection<ChatMessage>();
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
         ComeBackCommand = new RelayCommand(ComeBack);
-
-        _connectClientUseCase.ExecuteAsync();
-        _subscribeToTopicUseCase.ExecuteAsync();
 
         LoadMessagesAsync();
     }
 
     public ObservableCollection<ChatMessage> Messages
     {
-        get => _messages;
+        get => messages;
         set
         {
-            _messages = value;
+            messages = value;
             OnPropertyChanged(nameof(Messages));
         }
     }
@@ -72,7 +71,6 @@ public class ChatViewModel : INotifyPropertyChanged
 
         }
     }
-
 
     private async Task SendMessage()
     {
@@ -94,6 +92,15 @@ public class ChatViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(MessageInput));
 
             await _sendMessageUseCase.ExecuteAsync(message);  
+        }
+    }
+
+    public void CaptureSenderId(Guid senderId)
+    {
+        if (senderId != Guid.Empty)
+        {
+            _addContactService.SetCurrentContactId(senderId);
+            navigation.NavigateTo("Contact");
         }
     }
 

@@ -9,6 +9,7 @@
   <Page.Resources>
     <converters:HorizontalAlignmentConverter x:Key="HorizontalAlignmentConverter"/>
     <converters:BackgroundColorConverter x:Key="BackgroundColorConverter"/>
+    <converters:SenderIdConverter x:Key="SenderIdConverter"/>
   </Page.Resources>
 
   <Grid>
@@ -36,6 +37,8 @@
       <ListView.ItemTemplate>
         <DataTemplate x:DataType="model:ChatMessage">
           <StackPanel Margin="10" HorizontalAlignment="{Binding SenderId, Converter={StaticResource HorizontalAlignmentConverter}}">
+            <TextBlock Text="{x:Bind SenderId, Converter={StaticResource SenderIdConverter}}" Foreground="White" TextWrapping="Wrap" FontSize="10"
+                       Tapped="SenderId_Tapped"/>
             <Border Background="{Binding SenderId, Converter={StaticResource BackgroundColorConverter}}" 
                         CornerRadius="10" Padding="10" VerticalAlignment="Center" MaxWidth="250">
               <TextBlock Text="{x:Bind Message}" Foreground="White" TextWrapping="Wrap"/>

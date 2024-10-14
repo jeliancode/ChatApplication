@@ -22,6 +22,7 @@
   </UnoFeatures>
 </PropertyGroup>
   <ItemGroup>
+    <None Remove="Presentation\View\ContactPage.xaml" />
     <None Remove="Presentation\View\LoginPage.xaml" />
     <None Remove="Presentation\View\RoomsPage.xaml" />
     <None Remove="Presentation\View\SignUpPage.xaml" />
@@ -42,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Presentation\View\RoomsPage.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Presentation\View\ContactPage.xaml" />
   </ItemGroup>
 
 

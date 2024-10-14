@@ -3,6 +3,7 @@ using LookMeChatApp.ApplicationLayer.ViewModel;
 using LookMeChatApp.ApplicationLayer.Use_Cases;
 using LookMeChatApp.Infraestructure.Services;
 using LookMeChatApp.Domain.Model;
+using Microsoft.UI.Xaml.Input;
 
 namespace LookMeChatApp.Presentation.View;
 
@@ -32,5 +33,13 @@ public sealed partial class ChatPage : Page
         {
             _chatViewModel.OnMessageReceived(message);
         });
+    }
+
+    private void SenderId_Tapped(object sender, TappedRoutedEventArgs e)
+    {
+        if (sender is TextBlock textBlock && textBlock.DataContext is ChatMessage chatMessage)
+        {
+            _chatViewModel.CaptureSenderId(chatMessage.SenderId);
+        }
     }
 }

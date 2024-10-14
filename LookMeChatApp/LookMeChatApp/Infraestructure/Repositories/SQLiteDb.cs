@@ -9,6 +9,7 @@ public class SQLiteDb
     public UserRepository UserRepository { get; set; }
     public MessageRepository MessageRepository { get; set; }
     public RoomRepository RoomRepository { get; set; }
+    public FriendRepository FriendRepository { get; set; }
 
     public SQLiteDb(string dbPath)
     {
@@ -21,5 +22,6 @@ public class SQLiteDb
         UserRepository = new UserRepository(_sQLiteAsync);
         MessageRepository = new MessageRepository(_sQLiteAsync);
         RoomRepository = new RoomRepository(_sQLiteAsync);
+        FriendRepository = new FriendRepository(_sQLiteAsync);
     }
 }
