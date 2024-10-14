@@ -6,5 +6,5 @@ public class Friend
     [PrimaryKey, Unique]
     public Guid Id { get; set; }
     [NotNull]
-    public string Userame { get; set; }
+    public string Username { get; set; }
 }

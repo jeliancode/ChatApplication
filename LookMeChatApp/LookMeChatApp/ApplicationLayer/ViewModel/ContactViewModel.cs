@@ -5,46 +5,61 @@ using LookMeChatApp.Domain.Model;
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Infraestructure.Repositories;
 using LookMeChatApp.Infraestructure.Services;
+using LookMeChatApp.ApplicationLayer.Use_Cases;
 
 namespace LookMeChatApp.ApplicationLayer.ViewModel;
 
 public class ContactViewModel : INotifyPropertyChanged
 {
-    private readonly FriendRepository _friendRepository;
-    private readonly INavigation _navigation;
+    private readonly FriendRepository friendRepository;
+    private readonly INavigation navigation;
     private readonly SQLiteDb sQLiteDb;
-    private AddContactService addContactService;
+    private readonly AddContactService addContactService;
+    private readonly TopicSessionService topicSessionService;
+    private readonly AccountSessionService accountSessionService;
     public string ContactName { get; set; }
     public Guid CurrentContactId { get; set; }
     public event PropertyChangedEventHandler? PropertyChanged;
-
+    private readonly ConnectClientUseCase<Friend> connectClientUseCase;
+    private readonly SendMessageUseCase<Friend> sendMessageUseCase;
     public ICommand SaveCommand { get; }
 
     public ContactViewModel()
     {
         sQLiteDb = App.SQLiteDb;
-        _friendRepository = sQLiteDb.FriendRepository;
-        _navigation = App.NavigationService;
+        navigation = App.NavigationService;
+        var connectionManager = new ConnectionHandler<Friend>();
         addContactService = new AddContactService();
+        topicSessionService = new TopicSessionService();
+        accountSessionService = new AccountSessionService();
+        connectClientUseCase = new ConnectClientUseCase<Friend>(connectionManager);
+        sendMessageUseCase = new SendMessageUseCase<Friend>(connectionManager); 
         SaveCommand = new RelayCommand(SaveContact);
-        CurrentContactId = addContactService.GetCurrentContactId();
+        friendRepository = sQLiteDb.FriendRepository;
+        CurrentContactId = addContactService.GetCurrentContactId(); 
     }
 
     private async void SaveContact()
     {
         if (!string.IsNullOrEmpty(ContactName))
         {
+            string version = topicSessionService.GetCurrentVersion();
+            string room = "contact";
+            string user = accountSessionService.GetCurrentUsername(); 
+            string topic = $"/{version}/room/{user}/{room}";
 
             var newFriend = new Friend
             {
                 Id = CurrentContactId,
-                Userame = ContactName
+                Username = ContactName
             };
 
             ContactName = string.Empty;
             OnPropertyChanged(nameof(ContactName));
+            await connectClientUseCase.ExecuteAsync();
+            await sendMessageUseCase.ExecuteAsync(newFriend, topic);
+            await friendRepository.AddFriendAsync(newFriend);
 
-            await _friendRepository.AddFriendAsync(newFriend);
         }
     }
 

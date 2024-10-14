@@ -3,6 +3,7 @@ using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Domain.Model;
 using LookMeChatApp.Infraestructure.Repositories;
 using LookMeChatApp.Infraestructure.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -12,12 +13,12 @@ public class ChatViewModel : INotifyPropertyChanged
 {
     public string MessageInput { get; set; }
     private ObservableCollection<ChatMessage> messages;
-    private readonly ConnectClientUseCase _connectClientUseCase;
-    private readonly SubscribToTopicUseCase _subscribeToTopicUseCase;
-    private readonly SendMessageUseCase _sendMessageUseCase;
-    private readonly AccountSessionService _accountSessionService;
-    private readonly TopicSessionService _topicSessionService;
-    private readonly AddContactService _addContactService;
+    private readonly ConnectClientUseCase<ChatMessage> _connectClientUseCase;
+    private readonly SubscribToTopicUseCase<ChatMessage> _subscribeToTopicUseCase;
+    private readonly SendMessageUseCase<ChatMessage> _sendMessageUseCase;
+    private readonly AccountSessionService accountSessionService;
+    private readonly TopicSessionService topicSessionService;
+    private readonly AddContactService addContactService;
     private readonly SQLiteDb sQLiteDb;
     private readonly INavigation navigation;
     private IMessageRepository _messageRepository;
@@ -26,7 +27,7 @@ public class ChatViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ChatViewModel(SendMessageUseCase sendMessageUseCase, ConnectClientUseCase connectClientUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase subscribToTopicUseCase)
+    public ChatViewModel(SendMessageUseCase<ChatMessage> sendMessageUseCase, ConnectClientUseCase<ChatMessage> connectClientUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase<ChatMessage> subscribToTopicUseCase)
     {
         _connectClientUseCase = connectClientUseCase;
         _sendMessageUseCase = sendMessageUseCase;
@@ -37,9 +38,9 @@ public class ChatViewModel : INotifyPropertyChanged
 
         navigation = App.NavigationService;
         sQLiteDb = App.SQLiteDb;
-        _accountSessionService = new AccountSessionService();
-        _topicSessionService = new TopicSessionService();
-        _addContactService = new AddContactService();
+        accountSessionService = new AccountSessionService();
+        topicSessionService = new TopicSessionService();
+        addContactService = new AddContactService();
         messages = new ObservableCollection<ChatMessage>();
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
         ComeBackCommand = new RelayCommand(ComeBack);
@@ -59,7 +60,7 @@ public class ChatViewModel : INotifyPropertyChanged
 
     private async Task LoadMessagesAsync()
     {
-        var room = _topicSessionService.GetCurrentRoomName();
+        var room = topicSessionService.GetCurrentRoomName();
         var messagesRepository = sQLiteDb.MessageRepository;
         var messagesList = await messagesRepository.GetMessagesByRoom(room);
 
@@ -76,22 +77,25 @@ public class ChatViewModel : INotifyPropertyChanged
     {
         if (!string.IsNullOrWhiteSpace(MessageInput))
         {
-            Guid userId = _accountSessionService.GetCurrentUserId();
+            Guid userId = accountSessionService.GetCurrentUserId();
             var message = new ChatMessage
             {
                 Id = Guid.NewGuid(),
                 Message = MessageInput,
                 SenderId = userId,
-                Room = _topicSessionService.GetCurrentRoomName(),
+                Room = topicSessionService.GetCurrentRoomName(),
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
-
+            var user = accountSessionService .GetCurrentUsername();
+            var version = topicSessionService.GetCurrentVersion();
+            var room = topicSessionService.GetCurrentRoomName();
+            var currentUserPath = $"/{version}/room/{user}/{room}";
 
             MessageInput = string.Empty;
             OnPropertyChanged(nameof(MessageInput));
 
-            await _sendMessageUseCase.ExecuteAsync(message);  
+            await _sendMessageUseCase.ExecuteAsync(message, currentUserPath);  
         }
     }
 
@@ -99,14 +103,14 @@ public class ChatViewModel : INotifyPropertyChanged
     {
         if (senderId != Guid.Empty)
         {
-            _addContactService.SetCurrentContactId(senderId);
+            addContactService.SetCurrentContactId(senderId);
             navigation.NavigateTo("Contact");
         }
     }
 
     private void ComeBack()
     {
-        _topicSessionService.ClearCurrentVersion();
+        topicSessionService.ClearCurrentVersion();
         navigation.ComeBack();
     }
 

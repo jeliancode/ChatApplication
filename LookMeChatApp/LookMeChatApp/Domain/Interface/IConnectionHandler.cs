@@ -3,11 +3,11 @@ using MQTTnet.Client;
 
 namespace LookMeChatApp.Domain.Interface;
 
-public interface IConnectionHandler
+public interface IConnectionHandler <A>
 {
-    event Action<ChatMessage> MessageReceived;
+    event Action<A> MessageReceived;
     Task ConnectToMqttBrokerAsync();
     Task SubscribeToTopicAsync();
-    Task SendMessageAsync(ChatMessage message);
+    Task SendMessageAsync(A message, string topicPath);
     Task ReceiveMessageAsync(MqttApplicationMessageReceivedEventArgs e);
 }

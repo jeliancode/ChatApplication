@@ -7,10 +7,10 @@ using MQTTnet.Server;
 
 namespace LookMeChatApp.Infraestructure.Services;
 
-public class ConnectionHandler : IConnectionHandler
+public class ConnectionHandler<A> : IConnectionHandler<A>
 {
-    public event Action<ChatMessage> MessageReceived;
-    private readonly ISerializable<ChatMessage> serializer;
+    public event Action<A> MessageReceived;
+    private readonly ISerializable<A> serializer;
     private IMqttClient? _mqttClient;
     private MqttFactory _mqttFactory;
     private MqttClientOptions _options;
@@ -22,7 +22,7 @@ public class ConnectionHandler : IConnectionHandler
 
     public ConnectionHandler()
     { 
-        serializer = new JSONSerializable<ChatMessage>();
+        serializer = new JSONSerializable<A>();
         _topicSessionService = new TopicSessionService();
         _accountSessionService = new AccountSessionService();
 
@@ -30,7 +30,6 @@ public class ConnectionHandler : IConnectionHandler
         var room = _topicSessionService.GetCurrentRoomName();
         var user = _accountSessionService.GetCurrentUsername();
         topicToSubscribe = $"/{version}/room/+/{room}";
-        currentUserPath = $"/{version}/room/{user}/{room}";
         server = "test.mosquitto.org";
     }
 
@@ -61,13 +60,13 @@ public class ConnectionHandler : IConnectionHandler
         await _mqttClient.ConnectAsync(_options, CancellationToken.None);
     }
 
-    public async Task SendMessageAsync(ChatMessage messageSent)
+    public async Task SendMessageAsync(A messageSent, string topicPath)
     {
         _mqttClient.ConnectAsync(_options, CancellationToken.None);
-        string messageSerialized = serializer.Serialize(messageSent);
+        var messageSerialized = serializer.Serialize(messageSent);
 
         var message = new MqttApplicationMessageBuilder()
-            .WithTopic(currentUserPath)
+            .WithTopic(topicPath)
             .WithPayload(messageSerialized)
             .Build();
 
@@ -76,11 +75,10 @@ public class ConnectionHandler : IConnectionHandler
 
     public Task ReceiveMessageAsync(MqttApplicationMessageReceivedEventArgs e)
     {
-        string messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
-        ChatMessage receivedMessage = serializer.Deserialize(messageContent);
+        var messageContent = Encoding.UTF8.GetString(e.ApplicationMessage.PayloadSegment);
+        var receivedMessage = serializer.Deserialize(messageContent);
         MessageReceived?.Invoke(receivedMessage);
 
         return Task.CompletedTask;
     }
-
 }

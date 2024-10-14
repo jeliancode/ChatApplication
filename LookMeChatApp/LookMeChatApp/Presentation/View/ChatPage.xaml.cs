@@ -14,12 +14,12 @@ public sealed partial class ChatPage : Page
     public ChatPage()
     {
         this.InitializeComponent();
-        var connectionManager = new ConnectionHandler(); ;
+        var connectionManager = new ConnectionHandler<ChatMessage>(); ;
         var messageRepository = App.SQLiteDb.MessageRepository;
 
-        var connectClientUseCase = new ConnectClientUseCase(connectionManager);
-        var subscribToTopicUseCase = new SubscribToTopicUseCase(connectionManager);
-        var sendMessageUseCase = new SendMessageUseCase(connectionManager);
+        var connectClientUseCase = new ConnectClientUseCase<ChatMessage>(connectionManager);
+        var subscribToTopicUseCase = new SubscribToTopicUseCase<ChatMessage>(connectionManager);
+        var sendMessageUseCase = new SendMessageUseCase<ChatMessage>(connectionManager);
 
         _chatViewModel = new ChatViewModel(sendMessageUseCase, connectClientUseCase, messageRepository, subscribToTopicUseCase);
         this.DataContext = _chatViewModel;

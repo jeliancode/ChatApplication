@@ -8,11 +8,11 @@ using LookMeChatApp.Domain.Interface;
 
 namespace LookMeChatApp.ApplicationLayer.Use_Cases;
 
-public class ConnectClientUseCase : IMqttUseCase
+public class ConnectClientUseCase<A> : IMqttUseCase
 {
-    private readonly IConnectionHandler _connectionHandler;
+    private readonly IConnectionHandler<A> _connectionHandler;
 
-    public ConnectClientUseCase(IConnectionHandler connectionHandler)
+    public ConnectClientUseCase(IConnectionHandler<A> connectionHandler)
     {
         _connectionHandler = connectionHandler;
     }
