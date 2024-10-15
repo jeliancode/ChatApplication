@@ -1,7 +1,5 @@
-using System;
+
 using LookMeChatApp.Domain.Interface;
-using LookMeChatApp.Domain.Model;
-using LookMeChatApp.Infraestructure.Services;
 
 namespace LookMeChatApp.ApplicationLayer.Use_Cases;
 

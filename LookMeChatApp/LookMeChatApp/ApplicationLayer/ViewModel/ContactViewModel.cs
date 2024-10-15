@@ -17,13 +17,14 @@ public class ContactViewModel : INotifyPropertyChanged
     private readonly AddContactService addContactService;
     private readonly TopicSessionService topicSessionService;
     private readonly AccountSessionService accountSessionService;
-    public string ContactName { get; set; }
-    public Guid CurrentContactId { get; set; }
-    public event PropertyChangedEventHandler? PropertyChanged;
+    private readonly AESCryptoService aesCryptoService;
     private readonly ConnectClientUseCase<Friend> connectClientUseCase;
     private readonly SendMessageUseCase<Friend> sendMessageUseCase;
-    public ICommand SaveCommand { get; }
+    public event PropertyChangedEventHandler? PropertyChanged;
 
+    public ICommand SaveCommand { get; }
+        public string ContactName { get; set; }
+    public Guid CurrentContactId { get; set; }
     public ContactViewModel()
     {
         sQLiteDb = App.SQLiteDb;

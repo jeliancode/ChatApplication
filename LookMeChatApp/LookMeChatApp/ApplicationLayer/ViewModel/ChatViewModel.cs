@@ -20,6 +20,7 @@ public class ChatViewModel : INotifyPropertyChanged
     private readonly TopicSessionService topicSessionService;
     private readonly AddContactService addContactService;
     private readonly SQLiteDb sQLiteDb;
+    private readonly AESCryptoService aesCryptoService;
     private readonly INavigation navigation;
     private IMessageRepository _messageRepository;
     public ICommand SendMessageCommand { get; }
@@ -33,18 +34,20 @@ public class ChatViewModel : INotifyPropertyChanged
         _sendMessageUseCase = sendMessageUseCase;
         _subscribeToTopicUseCase = subscribToTopicUseCase;
         _messageRepository = messageRepository;
-        _connectClientUseCase.ExecuteAsync();
-        _subscribeToTopicUseCase.ExecuteAsync();
 
         navigation = App.NavigationService;
         sQLiteDb = App.SQLiteDb;
         accountSessionService = new AccountSessionService();
         topicSessionService = new TopicSessionService();
         addContactService = new AddContactService();
+        aesCryptoService = new AESCryptoService();
         messages = new ObservableCollection<ChatMessage>();
+
         SendMessageCommand = new RelayCommand(async () => await SendMessage());
         ComeBackCommand = new RelayCommand(ComeBack);
 
+        _connectClientUseCase.ExecuteAsync();
+        _subscribeToTopicUseCase.ExecuteAsync();
         LoadMessagesAsync();
     }
 
@@ -78,16 +81,18 @@ public class ChatViewModel : INotifyPropertyChanged
         if (!string.IsNullOrWhiteSpace(MessageInput))
         {
             Guid userId = accountSessionService.GetCurrentUserId();
+            var encryptedMessage = aesCryptoService.EncryptMessage(MessageInput);
+
             var message = new ChatMessage
             {
                 Id = Guid.NewGuid(),
-                Message = MessageInput,
+                Message = Convert.ToBase64String(encryptedMessage), //quitar encriptacion
                 SenderId = userId,
                 Room = topicSessionService.GetCurrentRoomName(),
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
-            var user = accountSessionService .GetCurrentUsername();
+            var user = accountSessionService.GetCurrentUsername();
             var version = topicSessionService.GetCurrentVersion();
             var room = topicSessionService.GetCurrentRoomName();
             var currentUserPath = $"/{version}/room/{user}/{room}";
@@ -95,7 +100,7 @@ public class ChatViewModel : INotifyPropertyChanged
             MessageInput = string.Empty;
             OnPropertyChanged(nameof(MessageInput));
 
-            await _sendMessageUseCase.ExecuteAsync(message, currentUserPath);  
+            await _sendMessageUseCase.ExecuteAsync(message, currentUserPath);
         }
     }
 
