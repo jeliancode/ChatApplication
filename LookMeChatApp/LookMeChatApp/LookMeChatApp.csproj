@@ -28,6 +28,7 @@
     <None Remove="Presentation\View\SignUpPage.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" />
     <PackageReference Include="MessagePack" />
     <PackageReference Include="MQTTnet" />
     <PackageReference Include="sqlite-net-pcl" />

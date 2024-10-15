@@ -19,7 +19,14 @@ public class MessageRepository : IMessageRepository
         await _semaphore.WaitAsync();
         try
         {
-            await _sQLiteDb.InsertAsync(message);
+            try
+            {
+                await _sQLiteDb.InsertAsync(message);
+            }
+            catch (Exception ex) 
+            { 
+            }
+                
         }
         finally
         {

@@ -26,6 +26,7 @@ public class ChatViewModel : INotifyPropertyChanged
     public ICommand SendMessageCommand { get; }
     public ICommand ComeBackCommand { get; }
 
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ChatViewModel(SendMessageUseCase<ChatMessage> sendMessageUseCase, ConnectClientUseCase<ChatMessage> connectClientUseCase, IMessageRepository messageRepository, SubscribToTopicUseCase<ChatMessage> subscribToTopicUseCase)
@@ -63,7 +64,10 @@ public class ChatViewModel : INotifyPropertyChanged
 
     private async Task LoadMessagesAsync()
     {
-        var room = topicSessionService.GetCurrentRoomName();
+        var roomName = topicSessionService.GetCurrentRoomName();
+        var version = topicSessionService.GetCurrentVersion();
+        var room = $"/{version}/room/+/{roomName}";
+
         var messagesRepository = sQLiteDb.MessageRepository;
         var messagesList = await messagesRepository.GetMessagesByRoom(room);
 
@@ -80,22 +84,24 @@ public class ChatViewModel : INotifyPropertyChanged
     {
         if (!string.IsNullOrWhiteSpace(MessageInput))
         {
-            Guid userId = accountSessionService.GetCurrentUserId();
+            var userId = accountSessionService.GetCurrentUserId();
             var encryptedMessage = aesCryptoService.EncryptMessage(MessageInput);
+            var user = accountSessionService.GetCurrentUsername();
+            var version = topicSessionService.GetCurrentVersion();
+            var roomName = topicSessionService.GetCurrentRoomName();
+            var room = $"/{version}/room/+/{roomName}/";
 
             var message = new ChatMessage
             {
                 Id = Guid.NewGuid(),
                 Message = Convert.ToBase64String(encryptedMessage), //quitar encriptacion
                 SenderId = userId,
-                Room = topicSessionService.GetCurrentRoomName(),
+                Room = room,
                 Timestamp = DateTime.UtcNow.ToString(),
             };
 
-            var user = accountSessionService.GetCurrentUsername();
-            var version = topicSessionService.GetCurrentVersion();
-            var room = topicSessionService.GetCurrentRoomName();
-            var currentUserPath = $"/{version}/room/{user}/{room}";
+
+            var currentUserPath = $"/{version}/room/{user}/{roomName}";
 
             MessageInput = string.Empty;
             OnPropertyChanged(nameof(MessageInput));

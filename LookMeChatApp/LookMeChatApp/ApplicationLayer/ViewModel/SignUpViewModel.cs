@@ -1,6 +1,9 @@
 using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Infraestructure.Services;
 using LookMeChatApp.Model;
+using Konscious.Security.Cryptography;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LookMeChatApp.ApplicationLayer.ViewModel;
 public class SignUpViewModel
@@ -10,6 +13,7 @@ public class SignUpViewModel
     private const string defaulDescription = "Hello! look me ;)";
     private readonly IUserRepository _userRepository;
     private readonly AccountSessionService _accountSessionService;
+    private HashService hashService;
     public string Username { get; set; }
     public string Password { get;   set; }
     public string ErrorMessage { get; set; }
@@ -21,6 +25,8 @@ public class SignUpViewModel
         _navigation = navegation;
         _userRepository = userRepository;
         _accountSessionService = new AccountSessionService();
+        hashService = new HashService();
+ 
         SignUpCommand = new RelayCommand(ExecuteSignUpCommand);
         MoveToLoginCommand = new RelayCommand(ExecureMoveToLoginCommand);
     }
@@ -34,17 +40,18 @@ public class SignUpViewModel
         }
 
         var user = CreateNewUser();
+
         if (user != null)
         {           
             try
             {
-                RegisterUserOnDb(user);
+                await RegisterUserOnDb(user);
+                _navigation.NavigateTo("Rooms");
             }
             catch(Exception e)
             {
-                Console.WriteLine("Error: "+e.Message);
-            }
-            _navigation.NavigateTo("Rooms");
+                Console.WriteLine("Error: " + e.Message);
+            }  
         }
     }
 
@@ -55,12 +62,17 @@ public class SignUpViewModel
 
     private User CreateNewUser()
     {
+        byte[] salt = new byte[16];
+        RandomNumberGenerator.Fill(salt);
+        var hashedPassword = hashService.HashPassword(Password, salt);
+
         var user = new User
-        {
-            IdUser = Guid.NewGuid(),
-            Username = Username,
-            Password = Password,
-            Description = defaulDescription
+            {
+                IdUser = Guid.NewGuid(),
+                Username = Username,
+                Password = Convert.ToBase64String(hashedPassword),
+                Description = defaulDescription,
+                Salt = Convert.ToBase64String(salt)
         };
 
         return user;

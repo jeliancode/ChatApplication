@@ -21,6 +21,7 @@ public class RoomsViewModel : INotifyPropertyChanged
     private readonly INavigation navigation;
     private readonly SQLiteDb sQLiteDb;
     private readonly TopicSessionService topicSessionService;
+    private readonly AccountSessionService accountSessionService;
     private Room _selectedRoom;
     private string _selectedVersion;
     private string _roomName;
@@ -30,9 +31,10 @@ public class RoomsViewModel : INotifyPropertyChanged
 
     public RoomsViewModel()
     {
-        ChatRooms = new ObservableCollection<Room>();
-        Messages = new ObservableCollection<ChatMessage>();
+        ChatRooms = [];
+        Messages = [];
         topicSessionService = new TopicSessionService();
+        accountSessionService = new AccountSessionService();
         navigation = App.NavigationService;
         sQLiteDb = App.SQLiteDb;
         
@@ -137,6 +139,9 @@ public class RoomsViewModel : INotifyPropertyChanged
     }
     private void Logout() 
     {
+        accountSessionService.ClearCurrentUserId();
+        accountSessionService.ClearCurrentUsername();
+        navigation.ComeBack();
     }
 
 

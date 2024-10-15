@@ -21,8 +21,11 @@ public class AESCryptoService
         return encryptor.TransformFinalBlock(plainText, 0, plainText.Length);
     }
 
-    public string DecryptMessage(byte[] encryptedMessage)
+    public string DecryptMessage(byte[] encryptedMessage, byte[] key, byte[] iv)
     {
+        using var aes = Aes.Create();
+        aes.Key = key;
+        aes.IV = iv;
         var decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
         byte[] decryptedBytes = decryptor.TransformFinalBlock(encryptedMessage, 0, encryptedMessage.Length);
         return Encoding.UTF8.GetString(decryptedBytes);

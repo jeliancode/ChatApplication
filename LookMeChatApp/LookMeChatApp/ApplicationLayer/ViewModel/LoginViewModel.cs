@@ -8,7 +8,8 @@ public class LoginViewModel
 {
     private readonly INavigation _navigation;
     private readonly IUserRepository _userRepository;
-    private readonly AccountSessionService _accountSessionService;
+    private readonly AccountSessionService accountSessionService;
+    private HashService hashService;
     public string Username { get; set; }
     public string Password { get; set; }
     public string ErrorMessage { get; set; }
@@ -19,7 +20,8 @@ public class LoginViewModel
     {
         _navigation = navegation;
         _userRepository = userRepository;
-        _accountSessionService = new AccountSessionService();
+        accountSessionService = new AccountSessionService();
+        hashService = new HashService();
         LoginCommand = new RelayCommand(ExecuteLoginCommand);
         MoveToSignUpCommand = new RelayCommand(ExecuteMoveToSignUpCommand);
     }
@@ -33,20 +35,24 @@ public class LoginViewModel
         }
 
         var user = await GetUserByUsername(Username);
+
         if (user == null)
         {
             ErrorMessage = "User not foud";
             return;
         }
+        
+        byte [] salt = Convert.FromBase64String(user.Salt);
+        var hashedPassword = hashService.HashPassword(Password, salt);
 
-        if (user.Password != Password)
+        if (!Convert.ToBase64String(hashedPassword).Equals(user.Password))
         {
             ErrorMessage = "Incorrect password";
             return;
         }
 
-        _accountSessionService.SetCurrentUsername(user.Username);
-        _accountSessionService.SetCurrentUserId(user.IdUser);
+        accountSessionService.SetCurrentUsername(user.Username);
+        accountSessionService.SetCurrentUserId(user.IdUser);
         _navigation.NavigateTo("Rooms");
     }
 

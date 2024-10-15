@@ -22,7 +22,8 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
-      <Button Grid.Column="0" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Content="←" Foreground="White" Background="Transparent"/>
+      <Button Grid.Column="0" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" Content="←" Foreground="White" Background="Transparent"
+              Command="{x:Bind _contactViewModel.ComeBackCommand}"/>
 
       <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top">
         <Image Source="ms-appx:///Assets/Images/user.png" Stretch="UniformToFill" Height="80" Width="80"/>

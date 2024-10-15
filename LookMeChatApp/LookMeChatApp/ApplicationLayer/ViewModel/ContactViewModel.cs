@@ -17,13 +17,14 @@ public class ContactViewModel : INotifyPropertyChanged
     private readonly AddContactService addContactService;
     private readonly TopicSessionService topicSessionService;
     private readonly AccountSessionService accountSessionService;
-    private readonly AESCryptoService aesCryptoService;
     private readonly ConnectClientUseCase<Friend> connectClientUseCase;
     private readonly SendMessageUseCase<Friend> sendMessageUseCase;
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public ICommand SaveCommand { get; }
-        public string ContactName { get; set; }
+    public ICommand ComeBackCommand { get; }
+
+    public string ContactName { get; set; }
     public Guid CurrentContactId { get; set; }
     public ContactViewModel()
     {
@@ -34,7 +35,8 @@ public class ContactViewModel : INotifyPropertyChanged
         topicSessionService = new TopicSessionService();
         accountSessionService = new AccountSessionService();
         connectClientUseCase = new ConnectClientUseCase<Friend>(connectionManager);
-        sendMessageUseCase = new SendMessageUseCase<Friend>(connectionManager); 
+        sendMessageUseCase = new SendMessageUseCase<Friend>(connectionManager);
+        ComeBackCommand = new RelayCommand(ComeBack);
         SaveCommand = new RelayCommand(SaveContact);
         friendRepository = sQLiteDb.FriendRepository;
         CurrentContactId = addContactService.GetCurrentContactId(); 
@@ -45,9 +47,8 @@ public class ContactViewModel : INotifyPropertyChanged
         if (!string.IsNullOrEmpty(ContactName))
         {
             string version = topicSessionService.GetCurrentVersion();
-            string room = "contact";
-            string user = accountSessionService.GetCurrentUsername(); 
-            string topic = $"/{version}/room/{user}/{room}";
+            string room = "contacts";
+            string topic = $"/{version}/{room}";
 
             var newFriend = new Friend
             {
@@ -62,6 +63,11 @@ public class ContactViewModel : INotifyPropertyChanged
             await friendRepository.AddFriendAsync(newFriend);
 
         }
+    }
+    private void ComeBack()
+    {
+        addContactService.ClearCurrentContactId();
+        navigation.ComeBack();
     }
 
     protected virtual void OnPropertyChanged(string propertyName)

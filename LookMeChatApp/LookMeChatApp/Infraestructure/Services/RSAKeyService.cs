@@ -11,18 +11,25 @@ public class RSAKeyService
         rsa = RSA.Create(2048);
     }
 
-    public byte[] EncryptWithPublicKey(string message, string publicKey)
+    public byte[] EncryptWithPublicKey(byte[] aesKey, string publicKey)
     {
         var encryptRsa = RSA.Create();
         encryptRsa.ImportRSAPublicKey(Convert.FromBase64String(publicKey), out _);
-        return encryptRsa.Encrypt(Encoding.UTF8.GetBytes(message), RSAEncryptionPadding.OaepSHA256);
+        return encryptRsa.Encrypt(aesKey, RSAEncryptionPadding.OaepSHA256);
     }
 
     public byte[] DecryptWithPrivateKey(string privateKey, byte[] data)
     {
         var decryptRsa = RSA.Create();
         decryptRsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
-        return decryptRsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256);
+        try
+        { 
+            return decryptRsa.Decrypt(data, RSAEncryptionPadding.OaepSHA256); 
+        }catch (Exception ex)
+        {
+            var error = ex.Message;
+        }
+        return null ;
     }
 
     public string GetPublicKey()
