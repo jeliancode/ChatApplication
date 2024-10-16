@@ -35,4 +35,11 @@ public class RoomRepository
     {
         return await _sQLiteDb.Table<Room>().ToListAsync();
     }
+
+    public async Task<List<Room>> GetUserRoomsAsync(Guid userId)
+    {
+        return await _sQLiteDb.Table<Room>()
+            .Where(room => room.UserId == userId)
+            .ToListAsync();
+    }
 }

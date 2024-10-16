@@ -80,8 +80,8 @@ public class RoomsViewModel : INotifyPropertyChanged
     private async void LoadRoomsAsync()
     {
         var roomsRepository = sQLiteDb.RoomRepository;
-
-        var rooms = await roomsRepository.GetAllRoomsAsync();
+        var userId = accountSessionService.GetCurrentUserId();
+        var rooms = await roomsRepository.GetUserRoomsAsync(userId);
         foreach (var room in rooms)
         {
             ChatRooms.Add(room);
@@ -121,7 +121,8 @@ public class RoomsViewModel : INotifyPropertyChanged
             var newRoom = new Room
             {
                 Id = Guid.NewGuid(),
-                RoomName = _roomName,
+                RoomName = _roomName.ToLower(),
+                UserId = accountSessionService.GetCurrentUserId(),
             };
 
             await App.SQLiteDb.RoomRepository.AddRoomAsync(newRoom);

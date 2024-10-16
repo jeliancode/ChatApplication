@@ -7,4 +7,5 @@ public class Room
     public Guid Id { get; set; }
     [NotNull, Unique]
     public string RoomName { get; set; }
+    public Guid UserId { get; set; }
 }

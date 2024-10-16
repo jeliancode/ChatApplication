@@ -1,3 +1,5 @@
+using LookMeChatApp.Domain.Model;
+using LookMeChatApp.Infraestructure.Repositories;
 using LookMeChatApp.Infraestructure.Services;
 using Microsoft.UI.Xaml.Data;
 
@@ -6,10 +8,12 @@ namespace LookMeChatApp.ApplicationLayer.Converters;
 public class SenderIdConverter : IValueConverter
 {
     private readonly AccountSessionService _sessionService;
+    private readonly FriendRepository friendRepository;
 
     public SenderIdConverter()
     {
         _sessionService = new AccountSessionService();
+        friendRepository = App.SQLiteDb.FriendRepository;
     }
     public object Convert(object value, Type targetType, object parameter, string language)
     {
@@ -22,5 +26,10 @@ public class SenderIdConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task<Friend?> GetById(string id)
+    {
+        return await friendRepository.FindByIdAsync(id);
     }
 }

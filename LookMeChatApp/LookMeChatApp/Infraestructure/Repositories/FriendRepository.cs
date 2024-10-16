@@ -27,10 +27,10 @@ public class FriendRepository
         };
     }
 
-    public async Task<Friend?> FindByIdAsync(Guid id)
+    public async Task<Friend?> FindByIdAsync(string  id)
     {
         return await _sQLiteDb.Table<Friend>()
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id.ToString() == id);
     }
 
     public async Task<Friend?> FindByUsernameAsync(string contactName)

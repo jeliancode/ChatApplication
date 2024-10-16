@@ -11,4 +11,5 @@ public class User
     public string Password { get; set; }
     public string Description { get; set; }
     public string Salt { get; set; }
+    public Guid RoomId { get; set; }
 }

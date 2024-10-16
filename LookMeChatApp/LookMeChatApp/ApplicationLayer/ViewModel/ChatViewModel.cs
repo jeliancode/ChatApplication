@@ -66,10 +66,9 @@ public class ChatViewModel : INotifyPropertyChanged
     {
         var roomName = topicSessionService.GetCurrentRoomName();
         var version = topicSessionService.GetCurrentVersion();
-        var room = $"/{version}/room/+/{roomName}";
 
         var messagesRepository = sQLiteDb.MessageRepository;
-        var messagesList = await messagesRepository.GetMessagesByRoom(room);
+        var messagesList = await messagesRepository.GetMessagesByRoom(roomName);
 
         Messages.Clear();
 
@@ -85,19 +84,18 @@ public class ChatViewModel : INotifyPropertyChanged
         if (!string.IsNullOrWhiteSpace(MessageInput))
         {
             var userId = accountSessionService.GetCurrentUserId();
-            var encryptedMessage = aesCryptoService.EncryptMessage(MessageInput);
             var user = accountSessionService.GetCurrentUsername();
             var version = topicSessionService.GetCurrentVersion();
             var roomName = topicSessionService.GetCurrentRoomName();
-            var room = $"/{version}/room/+/{roomName}/";
+           // var encryptedMessage = aesCryptoService.EncryptMessage(MessageInput);
 
             var message = new ChatMessage
             {
                 Id = Guid.NewGuid(),
-                Message = Convert.ToBase64String(encryptedMessage), //quitar encriptacion
+                Message = MessageInput,
                 SenderId = userId,
-                Room = room,
-                Timestamp = DateTime.UtcNow.ToString(),
+                Room = roomName,
+                Timestamp = DateTime.Now.ToString(),
             };
 
 
@@ -127,6 +125,7 @@ public class ChatViewModel : INotifyPropertyChanged
 
     public async void OnMessageReceived(ChatMessage receivedMessage)
     {
+        receivedMessage.Room = topicSessionService.GetCurrentRoomName() ;
         await SaveMessage(receivedMessage);
         Messages.Add(receivedMessage);
     }
