@@ -31,7 +31,10 @@ public sealed partial class ChatPage : Page
     {
         DispatcherQueue.TryEnqueue(() =>
         {
-            _chatViewModel.OnMessageReceived(message);
+            if (message != null)
+            {
+                _chatViewModel.OnMessageReceived(message);
+            }
         });
     }
 

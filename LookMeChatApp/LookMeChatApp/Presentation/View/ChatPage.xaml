@@ -26,7 +26,7 @@
       <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,0,0">
         <Image Source="ms-appx:///Assets/Images/user.png" Width="40" Height="40"/>
         <StackPanel Orientation="Vertical" Margin="10,0,0,0">
-          <TextBlock Text="Jesus Maldonado" Foreground="White" FontSize="16"/>
+          <TextBlock Text="{x:Bind _chatViewModel.RoomName}" Foreground="White" FontSize="16"/>
           <TextBlock Text="User status" Foreground="White" FontSize="12"/>
         </StackPanel>
       </StackPanel>

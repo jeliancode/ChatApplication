@@ -22,6 +22,7 @@ public class RoomsViewModel : INotifyPropertyChanged
     private readonly SQLiteDb sQLiteDb;
     private readonly TopicSessionService topicSessionService;
     private readonly AccountSessionService accountSessionService;
+    private readonly ChatNameService chatNameService;
     private Room _selectedRoom;
     private string _selectedVersion;
     private string _roomName;
@@ -35,6 +36,7 @@ public class RoomsViewModel : INotifyPropertyChanged
         Messages = [];
         topicSessionService = new TopicSessionService();
         accountSessionService = new AccountSessionService();
+        chatNameService = new ChatNameService();
         navigation = App.NavigationService;
         sQLiteDb = App.SQLiteDb;
         
@@ -108,6 +110,7 @@ public class RoomsViewModel : INotifyPropertyChanged
         {
             topicSessionService.SetCurrentVersion(_selectedVersion);
             topicSessionService.SetUserPath(_selectedRoom.RoomName);
+            chatNameService.SetCurrentRoom(_selectedRoom.RoomName);
             navigation.NavigateTo("Chat");
         }
     }
@@ -135,9 +138,11 @@ public class RoomsViewModel : INotifyPropertyChanged
     private void JoinRoom()
     {
     }
+
     private void NewChat() 
     {
     }
+
     private void Logout() 
     {
         accountSessionService.ClearCurrentUserId();

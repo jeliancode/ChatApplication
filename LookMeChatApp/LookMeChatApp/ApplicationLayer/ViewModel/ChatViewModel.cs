@@ -3,7 +3,6 @@ using LookMeChatApp.Domain.Interface;
 using LookMeChatApp.Domain.Model;
 using LookMeChatApp.Infraestructure.Repositories;
 using LookMeChatApp.Infraestructure.Services;
-using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -12,6 +11,7 @@ namespace LookMeChatApp.ApplicationLayer.ViewModel;
 public class ChatViewModel : INotifyPropertyChanged
 {
     public string MessageInput { get; set; }
+    private string roomname;
     private ObservableCollection<ChatMessage> messages;
     private readonly ConnectClientUseCase<ChatMessage> _connectClientUseCase;
     private readonly SubscribToTopicUseCase<ChatMessage> _subscribeToTopicUseCase;
@@ -19,6 +19,7 @@ public class ChatViewModel : INotifyPropertyChanged
     private readonly AccountSessionService accountSessionService;
     private readonly TopicSessionService topicSessionService;
     private readonly AddContactService addContactService;
+    private readonly ChatNameService chatNameService;
     private readonly SQLiteDb sQLiteDb;
     private readonly AESCryptoService aesCryptoService;
     private readonly INavigation navigation;
@@ -41,6 +42,7 @@ public class ChatViewModel : INotifyPropertyChanged
         accountSessionService = new AccountSessionService();
         topicSessionService = new TopicSessionService();
         addContactService = new AddContactService();
+        chatNameService = new ChatNameService();
         aesCryptoService = new AESCryptoService();
         messages = new ObservableCollection<ChatMessage>();
 
@@ -49,7 +51,22 @@ public class ChatViewModel : INotifyPropertyChanged
 
         _connectClientUseCase.ExecuteAsync();
         _subscribeToTopicUseCase.ExecuteAsync();
+        SetRoomName();
         LoadMessagesAsync();
+    }
+
+    public string RoomName 
+    { 
+        get => roomname;
+        set 
+        { 
+            roomname = value;
+        }
+    }
+
+    private void SetRoomName()
+    {
+        roomname = chatNameService.GetCurrentRoom();
     }
 
     public ObservableCollection<ChatMessage> Messages
@@ -61,6 +78,7 @@ public class ChatViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(Messages));
         }
     }
+
 
     private async Task LoadMessagesAsync()
     {
@@ -87,7 +105,6 @@ public class ChatViewModel : INotifyPropertyChanged
             var user = accountSessionService.GetCurrentUsername();
             var version = topicSessionService.GetCurrentVersion();
             var roomName = topicSessionService.GetCurrentRoomName();
-           // var encryptedMessage = aesCryptoService.EncryptMessage(MessageInput);
 
             var message = new ChatMessage
             {
@@ -120,11 +137,13 @@ public class ChatViewModel : INotifyPropertyChanged
     private void ComeBack()
     {
         topicSessionService.ClearCurrentVersion();
+        chatNameService.ClearCurrentRoom();
         navigation.ComeBack();
     }
 
     public async void OnMessageReceived(ChatMessage receivedMessage)
     {
+        
         receivedMessage.Room = topicSessionService.GetCurrentRoomName() ;
         await SaveMessage(receivedMessage);
         Messages.Add(receivedMessage);

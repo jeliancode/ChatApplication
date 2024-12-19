@@ -1,6 +1,5 @@
 using System.Text;
 using LookMeChatApp.Domain.Interface;
-using LookMeChatApp.Domain.Model;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Server;
@@ -30,7 +29,7 @@ public class ConnectionHandler<A> : IConnectionHandler<A>
         var room = topicSessionService.GetCurrentRoomName();
         var user = accountSessionService.GetCurrentUsername();
         topicToSubscribe = $"/{version}/room/+/{room}";
-        server = "146.190.213.152";
+        server = "test.mosquitto.org";
     }
 
     public async Task ConnectToMqttBrokerAsync()

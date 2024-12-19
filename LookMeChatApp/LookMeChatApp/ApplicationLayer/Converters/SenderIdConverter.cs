@@ -9,6 +9,7 @@ public class SenderIdConverter : IValueConverter
 {
     private readonly AccountSessionService _sessionService;
     private readonly FriendRepository friendRepository;
+    private string senderName;
 
     public SenderIdConverter()
     {
@@ -17,19 +18,33 @@ public class SenderIdConverter : IValueConverter
     }
     public object Convert(object value, Type targetType, object parameter, string language)
     {
+        
         string senderId = value.ToString();
         string currentUserId = _sessionService.GetCurrentUserId().ToString();
+        if (senderId == currentUserId)
+        {
+            return "You";
+        }
+        
+        string? senderName = GetById(Guid.Parse(senderId)).GetAwaiter().GetResult();
+        if (senderName != null)
+        {
+            return senderName;
+        }
 
-        return senderId == currentUserId ? "You" : senderId;
+        return senderId;
     }
+
+
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();
     }
 
-    private async Task<Friend?> GetById(string id)
+    private async Task<string?> GetById(Guid id)
     {
-        return await friendRepository.FindByIdAsync(id);
+        var contact = await friendRepository.FindByIdAsync(id);
+        return contact?.Username;
     }
 }
